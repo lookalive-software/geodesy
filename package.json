@@ -1,0 +1,17 @@
+{
+  "name": "@lookalive/geodesy",
+  "version": "0.6.0",
+  "description": "Geometric Divisions of Space for Composing Visuaully Memorable Data Collections",
+  "main": "source/server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Colten Jackson",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@lookalive/elementary": "^0.3.3"
+  }
+}

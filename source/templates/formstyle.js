@@ -1,4 +1,4 @@
-exports.formstyle = () => ({
+module.exports = {
     "style": {
         "body": {
             "box-sizing":"border-box",
@@ -43,23 +43,43 @@ exports.formstyle = () => ({
         //     "border-bottom":"2px solid black"
         // },
         "menu": {
-            "padding-left": "20px",
-            "width": "200px"
+            // "padding-left": "20px",
+            "width": "200px",
+            "margin": "0 auto"
+            // "border-radius":"8px",
+            // "border":"2px solid rgba(0,0,0,0.2)",
         },
+        // this will be the tab buttons
+        "menu > [type=\"submit\"]": {
+            "width": "50%",
+            "position": "relative" // stacking order hack to overlap shadow
+        },
+        "menu > [type=\"submit\"]:first-child": {
+            "width": "100%"
+        },
+
+        ".tabs": {
+            "position": "relative"
+        },
+        ".tabs [type=\"submit\"]": {
+            "width": "calc(100% / 3)"
+        },
+
         "fieldset": {
             "margin-bottom":"10px",
-            "border-radius":"8px",
+
             "display":"flex",
             "flex-direction":"column",
-            "justify-content":"space-evenly",
+            // "justify-content":"space-evenly",
 
-            "font-family":"monospace",
-            "font-size":"large",
-            "font-weight":"bold",
+            "font-family": "monospace",
+            "font-size":   "large",
+            "font-weight": "bold",
             // from a "neumorphic" generator
             "background": "linear-gradient(145deg, #f0f0f0, #cacaca)",
             "box-shadow":  "13px 13px 26px #a1a1a1, -13px -13px 26px #ffffff"
         },
+
         "label, section":{
             "display":"flex",
             "justify-content":"space-between",
@@ -70,8 +90,9 @@ exports.formstyle = () => ({
         // "#linearpaint, #drawerase": {
         //     "justify-content":"center"
         // },
+
         "label > *, section > *": {
-            "margin": "0 5px"
+            "margin": "2px 4px"
         },
         "input[type=\"text\"], select": {
             "width":"60%"
@@ -86,12 +107,14 @@ exports.formstyle = () => ({
         "input[type=\"radio\"] ~ label": {
             "font-size": "small"
         },
+
         "input[type=\"number\"]": {
-            "width":"25%",
+            "width": "25%",
             "text-align":"center"
         },
         "input[type=\"range\"]": {
-            "width":"100%",
+            "width": "100%",
+            "position": "relative",
             "z-index": "1" // for overlapping with color input
             // "text-align":"center"
         },
@@ -108,19 +131,19 @@ exports.formstyle = () => ({
             "left":"75px",
             "top": "15px"
         },
-        "summary":{
-            "height":"1em"
-        },
-        "summary > legend":{
-            "position":"relative",
-            "top":"-0.9em",
-            "left":"1em"
-        },
+        // "summary":{
+        //     "height":"1em"
+        // },
+        // "summary > legend":{
+        //     "position":"relative",
+        //     "top":"-0.9em",
+        //     "left":"1em"
+        // },
         "alphawrap": {
             "display": "block",
             "mask-image": "linear-gradient(to right, transparent, black)",
             "-webkit-mask-image": "linear-gradient(to right, transparent, black)",
             "margin-top": "-15px"
-        },
+        }
     }
-})
+}

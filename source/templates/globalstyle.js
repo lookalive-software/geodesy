@@ -1,4 +1,4 @@
-exports.globalstyle = params => ({
+module.exports = {
 	"style": {
 	    "*": { // 
 	        "margin": "0",
@@ -10,4 +10,4 @@ exports.globalstyle = params => ({
 	        "height": "100%"
 	    }
 	}
-})
+}

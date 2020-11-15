@@ -1,6 +1,5 @@
 // since no params are used this could be JSON but then I couldn't have comments
-exports.articlestyle = () => ({
-"style":{
+module.exports = { "style": {
 	// every article is a new container moved to the origin at 0,0
 	// so that the positioning of sections and sectionafters can be done relative to center of the screen
     "@font-face": {
@@ -112,4 +111,4 @@ exports.articlestyle = () => ({
 	// 	"float":" right"
 	// 	// shape-outside: url(var(--shaperight))
 	// }
-}})
+}}

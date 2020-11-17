@@ -31,12 +31,26 @@ http.createServer((req, res) => {
 
     console.log(options)
 
+    // if options.defocus, set focus to null
+    // this hides all local fieldsets + the buttons move/paint
+    // if(options.defocus){
+    //     options.focus = "null"
+    // }
+    // until I have an actual mode-switched implemented I'll skip this step
+
     let defaultArticle = () => Object.assign({}, defaultParam, {motif: choose(motifs)})
     // maybe this is hacky but maybe later I can have a more generalized 'randomize' strategy: I'm just falling back to types/defaultParam, and overwriting blank arrays with a randomized motif
-    paramarray = paramarray.length ? paramarray.map(param => Object.assign({}, defaultParam, param))
-                                   : [defaultArticle()] // I guess I need to be sure that I'm not breaking out of a type, if I change the name of motifs or whatever
-
+    // when I switch from one type of article to another, the current querystring doesn't contain all the necessary values -- so merge with default params
+    paramarray = paramarray.map(param => Object.assign({}, defaultParam, param))
+                                //    : [defaultArticle()] // I guess I need to be sure that I'm not breaking out of a type, if I change the name of motifs or whatever
+    if(!paramarray.length){
+        // I can assume there's no global params either if theres 0 articles, assume blank slate
+        options.focus = 0
+        options.mode = "paint"
+        paramarray.push(defaultArticle())
+    }
     // this is my 'add article' bounds checks, I could check what motif is next to me, or even duplicate whats next to me...
+    // this whole section gets overwritten once I have dupe and drop 
     if(options.focus == -1){
         options.focus = 0
         paramarray.unshift(defaultArticle())
@@ -44,6 +58,10 @@ http.createServer((req, res) => {
     if(options.focus == paramarray.length){ // length is actually out of bounds, our signal that a new 
         paramarray.push(defaultArticle())
     }
+    // but if I have duplicate buttons, that lets me create a bottom or top layer just by duplicating at the edge
+    // So come up with a fast element dupe algorithm. or delete an element!
+    // Count down from the end, copying elements 
+
     // scan the paramarray for 'delete' and 'duplicate' keys, and perform that operation before moving on
     // prepend or append default object is out of bounds focus is experienced
 
@@ -73,7 +91,7 @@ http.createServer((req, res) => {
                 res.writeHead(200, {'Content-Type': mimetypes[ext]})
                 fs.createReadStream('.' + pathname)
                 .on('error', err => res.end('404'))
-                .pipe(res)
+                .pipe(res) // compress it here if you want
     }
 
 }).listen(3031).on('listening', function(){console.log("Is listening on 3031")})

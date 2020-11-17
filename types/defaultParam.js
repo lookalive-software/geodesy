@@ -19,7 +19,7 @@ module.exports = Object.freeze({
         "--xcent": 0, // 0 < 0.01x < 1 -- determines partial offset, between alignments
         "--ycent": 0, // 0 < 0.01x < 1
         // modal tabs
-        "mode": "jali", // text || embed
+        "type": "net", // text || embed
         // case embed
         "embedurl": "",
         "embedtag": "iframe", // video || img

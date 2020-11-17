@@ -23,25 +23,7 @@ module.exports = {
             "display":"flex",
             "overflow":"hidden auto",
         },
-        "form#formlayers input[type=\"radio\"]:checked ~ label ": {
-            "background":"rgba(100,100,255,0.3)"
-        },
-        // "form > button":{
-        //     "border-radius": "8px",
-        //     "padding": "8px 0",
-        //     "width": "90%",
-        //     "margin-top":"auto"
-        // },
-        // "#formprops > input:first-child": {
-        //     "width":"90%",
-        //     "font-size":"medium",
-        //     "font-weight":"bold",
-        //     "text-align":"center",
-        //     "margin-bottom":"15px",
-        //     "background": "transparent",
-        //     "border":"none",
-        //     "border-bottom":"2px solid black"
-        // },
+
         "menu": {
             // "padding-left": "20px",
             "width": "200px",
@@ -49,20 +31,38 @@ module.exports = {
             // "border-radius":"8px",
             // "border":"2px solid rgba(0,0,0,0.2)",
         },
-        // this will be the tab buttons
-        "menu > [type=\"submit\"]": {
+        // this will be the tab button
+        "menu > [name=\"defocus\"]": {
+            "width": "100%"
+        },
+        "menu > [name=\"mode\"]": {
             "width": "50%",
             "position": "relative" // stacking order hack to overlap shadow
         },
-        "menu > [type=\"submit\"]:first-child": {
-            "width": "100%"
-        },
-
-        ".tabs": {
+        "menu [name^=\"type\"]": {
+            "width": "calc(100% / 3)",
             "position": "relative"
         },
-        ".tabs [type=\"submit\"]": {
-            "width": "calc(100% / 3)"
+        "div.hide": {
+            "display": "none"
+        },
+        // hide the paint or move fieldset when its not needed
+        "form[mode=\"move\"] fieldset[for=\"paint\"], form[mode=\"paint\"] fieldset[for=\"move\"]": {
+            "display": "none"
+        },
+        // give the selected tab a look of continuity with the fieldset, tab-style
+        "[mode=\"paint\"] [value=\"paint\"], [mode=\"move\"] [value=\"move\"]": {
+            "border-bottom": "0",
+            "top": "3px"
+        },
+        // hide paint/move buttons when in defocus mode
+        "[focus=\"null\"] [value=\"paint\"], [focus=\"null\"] [value=\"move\"]": {
+            "display": "none"
+        },
+        // same thing for the other three buttons
+        ".text [value=\"text\"], .embed [value=\"embed\"], .net [value=\"net\"]": {
+            "border-bottom": "0",
+            "top": "3px"
         },
 
         "fieldset": {
@@ -80,6 +80,7 @@ module.exports = {
             "box-shadow":  "13px 13px 26px #a1a1a1, -13px -13px 26px #ffffff"
         },
 
+        // except for 
         "label, section":{
             "display":"flex",
             "justify-content":"space-between",
@@ -131,14 +132,6 @@ module.exports = {
             "left":"75px",
             "top": "15px"
         },
-        // "summary":{
-        //     "height":"1em"
-        // },
-        // "summary > legend":{
-        //     "position":"relative",
-        //     "top":"-0.9em",
-        //     "left":"1em"
-        // },
         "alphawrap": {
             "display": "block",
             "mask-image": "linear-gradient(to right, transparent, black)",

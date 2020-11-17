@@ -1,0 +1,54 @@
+{
+    "meta":{
+        "notebook":"https://www.wolframcloud.com/obj/jazzyjackson/Published/doublesquares.nb",
+        "harmonic":["sqrt(2)","1"],
+        "source": ["Geometric Concepts in Islamic Art Issam El-Said & A. Parman"],
+        "wallpaper": ["sqrt(2)","sqrt(2)"]
+    },
+    "motif":[
+        {
+            "basis":[["sqrt(2)","sqrt(2)"],["sqrt(2)","-sqrt(2)"]],
+            "offset":["0","0"],
+            "polygon":[
+                ["1", "0"],
+                ["sqrt(2 - sqrt(2)) cos(pi/8)","sqrt(2 - sqrt(2)) sin(pi/8)"],
+                ["1 / sqrt(2)", "1 / sqrt(2)"],
+                ["sqrt(2 - sqrt(2)) sin(pi/8)", "sqrt(2 - sqrt(2)) cos(pi/8)"],
+                ["0","1"],
+                ["-sqrt(2 - sqrt(2)) sin(pi/8)","sqrt(2 - sqrt(2)) cos(pi/8)"],
+                ["-1 / sqrt(2)", "1 / sqrt(2)"],
+                ["-sqrt(2 - sqrt(2)) cos(pi/8)","sqrt(2 - sqrt(2)) sin(pi/8)"],
+                ["-1","0"],
+                ["-sqrt(2 - sqrt(2)) cos(pi/8)","-sqrt(2 - sqrt(2)) sin(pi/8)"],
+                ["-1 / sqrt(2)", "-1 / sqrt(2)"],  
+                ["-sqrt(2 - sqrt(2)) sin(pi/8)", "-sqrt(2 - sqrt(2)) cos(pi/8)"],
+                ["0","-1"],
+                ["sqrt(2 - sqrt(2)) sin(pi/8)", "-sqrt(2 - sqrt(2)) cos(pi/8)"],
+                ["1 / sqrt(2)", "-1 / sqrt(2)"],
+                ["sqrt(2 - sqrt(2)) cos(pi/8)","-sqrt(2 - sqrt(2)) sin(pi/8)"]
+            ]
+        },
+        {
+            "basis":[["sqrt(2)","sqrt(2)"],["sqrt(2)","-sqrt(2)"]],
+            "offset":["0","sqrt(2)"],
+            "polygon":[
+                ["-1 + 2sqrt(2 - sqrt(2)) cos(pi/8)", "0"],
+                ["sqrt(2 - sqrt(2)) cos(pi/8)","sqrt(2 - sqrt(2)) sin(pi/8)"],
+                ["1 / sqrt(2)", "1 / sqrt(2)"],
+                ["sqrt(2 - sqrt(2)) sin(pi/8)", "sqrt(2 - sqrt(2)) cos(pi/8)"],
+                ["0","-1 + 2sqrt(2 - sqrt(2)) cos(pi/8)"],
+                ["-sqrt(2 - sqrt(2)) sin(pi/8)","sqrt(2 - sqrt(2)) cos(pi/8)"],
+                ["-1 / sqrt(2)", "1 / sqrt(2)"],
+                ["-sqrt(2 - sqrt(2)) cos(pi/8)","sqrt(2 - sqrt(2)) sin(pi/8)"],
+                ["1 - 2sqrt(2 - sqrt(2)) cos(pi/8)","0"],
+                ["-sqrt(2 - sqrt(2)) cos(pi/8)","-sqrt(2 - sqrt(2)) sin(pi/8)"],
+                ["-1 / sqrt(2)", "-1 / sqrt(2)"],  
+                ["-sqrt(2 - sqrt(2)) sin(pi/8)", "-sqrt(2 - sqrt(2)) cos(pi/8)"],
+                ["0","1 - 2sqrt(2 - sqrt(2)) cos(pi/8)"],
+                ["sqrt(2 - sqrt(2)) sin(pi/8)", "-sqrt(2 - sqrt(2)) cos(pi/8)"],
+                ["1 / sqrt(2)", "-1 / sqrt(2)"],
+                ["sqrt(2 - sqrt(2)) cos(pi/8)","-sqrt(2 - sqrt(2)) sin(pi/8)"]
+            ]
+        }
+    ]
+}   

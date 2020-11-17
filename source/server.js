@@ -7,6 +7,7 @@ const fs = require('fs')
 const { elementary } = require('@lookalive/elementary')
 // local modules
 const paramparse = require('./lib/paramparse')
+const paintarticle = require('./lib/paintarticle')
 // static templates
 const favicon = require('./templates/favicon')
 const globalstyle = require('./templates/globalstyle')
@@ -15,6 +16,9 @@ const articlestyle = require('./templates/articlestyle')
 // functional templates
 const form = require('./templates/form')
 
+// print
+console.log("CWD")
+console.log(process.cwd())
 
 // types
 const defaultParam = require('../types/defaultParam')
@@ -30,6 +34,7 @@ http.createServer((req, res) => {
     let { paramarray, options } = paramparse(query)
 
     console.log(options)
+    console.log(paramarray)
 
     // if options.defocus, set focus to null
     // this hides all local fieldsets + the buttons move/paint
@@ -87,11 +92,25 @@ http.createServer((req, res) => {
                 ]}
             ]))
         break
+        case 'paramarray': 
+            res.end(elementary([
+                {"head": [
+                    // this should also be the favicon and metacharset and all
+                    {"title":["Geodesy"]},
+                    {"meta":{"charset":"UTF-8"}},
+                    favicon,
+                    globalstyle,
+                    articlestyle
+                ]},
+                {"body": paramarray.map(paintarticle)}
+            ]))
+        break
         default:
-                res.writeHead(200, {'Content-Type': mimetypes[ext]})
-                fs.createReadStream('.' + pathname)
+                res.writeHead(200, {'Content-Type': mimetypes[ext] || mimetypes[undefined] })
+                fs.createReadStream('.' + pathname) // maybe .. ?
                 .on('error', err => res.end('404'))
                 .pipe(res) // compress it here if you want
     }
 
 }).listen(3031).on('listening', function(){console.log("Is listening on 3031")})
+// I think the cwd of the server is the folder is was started in, so node souce/server.js servers files relateive to ./, not ./source

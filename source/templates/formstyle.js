@@ -32,7 +32,7 @@ module.exports = {
             // "border":"2px solid rgba(0,0,0,0.2)",
         },
         // this will be the tab button
-        "menu > [name=\"defocus\"]": {
+        "menu > [name=\"defocus\"], menu > [value=\"update\"]": {
             "width": "100%"
         },
         "menu > [name=\"mode\"]": {

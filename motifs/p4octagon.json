@@ -1,0 +1,39 @@
+{
+    "meta":{
+        "notebook":"https://www.wolframcloud.com/obj/jazzyjackson/Published/octostar.nb",
+        "harmonic":["1 + sqrt(2)","1"],
+        "history": ["Masjid-i-Jāmi, Forūmad, Iran, 7/13th century"],
+        "source": ["Geometric Concepts in Islamic Art Issam El-Said & A. Parman"],
+        "wallpaper": ["sqrt(2)","sqrt(2)"]
+    },
+    "motif":[
+        {
+            "basis":[["sqrt(2)","sqrt(2)"],["sqrt(2)","-sqrt(2)"]],
+            "offset":["sqrt(2)/2","-sqrt(2)/2"],
+            "polygon":[
+                ["1/sqrt(2)","1/sqrt(2)"],
+                ["0","1"],
+                ["-1/sqrt(2)","1/sqrt(2)"],
+                ["-1","0"],
+                ["-1/sqrt(2)", "-1/sqrt(2)"],
+                ["0","-1"],
+                ["1/sqrt(2)", "-1/sqrt(2)"],
+                ["1","0"]
+            ]
+        },
+        {
+            "basis":[["sqrt(2)","sqrt(2)"],["sqrt(2)","-sqrt(2)"]],
+            "offset":["sqrt(2)/2","sqrt(2)/2"],
+            "polygon":[
+                ["1/sqrt(2)","1/sqrt(2)"],
+                ["0", "-1 + sqrt(2)"],
+                ["-1/sqrt(2)","1/sqrt(2)"],
+                ["1 - sqrt(2)","0"],
+                ["-1/sqrt(2)","-1/sqrt(2)"],
+                ["0","1 - sqrt(2)"],
+                ["1/sqrt(2)","-1/sqrt(2)"],
+                ["-1 + sqrt(2)", "0"]
+            ]
+        }
+    ]
+}   

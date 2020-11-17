@@ -1,0 +1,27 @@
+{
+    "meta":{
+        "notebook":"https://www.wolframcloud.com/obj/jazzyjackson/Published/alternatetriangles.nb",
+        "harmonic":["1","1"],
+        "wallpaper": ["sqrt(3)/2","3/2"]
+    },
+    "motif":[
+        {
+            "basis":[["sqrt(3)","0"],["sqrt(3)/2","3/2"]],
+            "offset":["0","-1"],
+            "polygon":[
+                ["sqrt(3)/2","-1/2"],
+                ["0","1"],
+                ["-sqrt(3)/2","-1/2"]
+            ]
+        },
+        {
+            "basis":[["sqrt(3)","0"],["sqrt(3)/2","3/2"]],
+            "offset":["0","1"],
+            "polygon":[
+                ["sqrt(3)/2","1/2"],
+                ["-sqrt(3)/2","1/2"],
+                ["0","-1"]
+            ]
+        }
+    ]
+}

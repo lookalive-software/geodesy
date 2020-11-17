@@ -1,0 +1,22 @@
+{
+    "meta":{
+        "notebook": "https://www.wolframcloud.com/obj/jazzyjackson/Published/honeycomb.nb",
+        "harmonic":["1"],
+        "source": ["honeybees"],
+        "wallpaper": ["3/2", "sqrt(3)/2"]
+    },
+    "motif":[
+        {
+            "basis": [["0","sqrt(3)"],["3/2","sqrt(3)/2"]],
+            "offset":["0","0"],
+            "polygon":[
+                ["1/2", "sqrt(3)/2"],
+                ["-1/2", "sqrt(3)/2"],
+                ["-1","0"],
+                ["-1/2", "-sqrt(3)/2"],
+                ["1/2", "-sqrt(3)/2"],
+                ["1","0"]
+            ]
+        }
+    ]
+}

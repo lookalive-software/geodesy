@@ -5,7 +5,7 @@ module.exports = { "style": {
     "@font-face": {
         "font-family": "recursive",
         /* attempt to use localy hosted woff file but fallback to google font API*/
-        "src": `url('/fonts/recursive.woff2') format('woff2-variations')`,
+        "src": `url('/font/recursive.woff2') format('woff2-variations')`,
         // "src": `url('https://fonts.googleapis.com/css2?family=Recursive:slnt,wght,CASL,CRSV,MONO@-15..0,300..1000,0..1,0..1,0..1&display=swap')`,
         "font-weight": "300 1000"
     },
@@ -21,13 +21,13 @@ module.exports = { "style": {
 		"height": "100%",
 		"shape-margin": "calc(var(--margin) * 100%)",
 	},
-	"section[mode=\"embed\"]": {
+	"section[type=\"embed\"]": {
 		"pointer-events": "none",
 	},
 	// iframe should only exist in embed mode, no?
 	// last-child in embed mode is going to be a video, 
 	// "[mode=\"embed\"] iframe, [mode=\"embed\"] img, [mode=\"embed\"] video": {
-	"[mode=\"embed\"] > *": {
+	"[type=\"embed\"] > *": {
 		"pointer-events": "all",
 		// "frameborder": "0",
 		"opacity": "var(--fillopacity)",
@@ -44,8 +44,8 @@ module.exports = { "style": {
 		// "height": "0",
 		"overflow":"visible", // default ?
 		// this x / y offset needs to be multiplied by art... 
-		"left": "calc(50vw + 1px * calc(var(--xoffset) * var(--wallx) * var(--zoom)))", // + to go left to right
-		"top":  "calc(50vh - 1px * calc(var(--yoffset) * var(--wally) * var(--zoom)))", // - to go bottom to top
+		"left": "calc(50vw + 1px * calc(var(--xcent) * var(--wallx) * var(--zoom)))", // + to go left to right
+		"top":  "calc(50vh - 1px * calc(var(--ycent) * var(--wally) * var(--zoom)))", // - to go bottom to top
 		// "top": "50vh",
 		"filter": "blur(calc(var(--blur) * 1px))",
 		// "opacity": "var(--opacity)",

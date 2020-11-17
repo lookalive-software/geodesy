@@ -15,6 +15,7 @@ module.exports = function(paramarray, options){
             }},
             // one 'focus' button
             {"menu": [
+                {"input": {"type":"submit", "value": "update"}},
                 {"input": {
                     "type":"submit",
                     // if I'm already defocused don't submit with this name...
@@ -336,7 +337,7 @@ module.exports = function(paramarray, options){
                                                 {"textarea": {
                                                     // would be cool if I can let you upload a txt file full of quotes
                                                     // will need some of that javascript auto-scaling to find a size and margin that fills the space
-                                                    "name": `content-${n}`, "value": param.content
+                                                    "name": `content-${n}`, "childNodes": [ param.content ]
                                                 }} 
                                             ]},
                                             {"label": [

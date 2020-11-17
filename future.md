@@ -5,6 +5,8 @@ The bottom half of the menu (the singular menu) has a title-header, a duplicate 
 The focus mode is set to defocus -- to show none of the local-fieldsets, 
 SO there is a hidden radio button, focus value null. This way none of the local fieldsets will display.
 
+Incorporate xstep xcent etc into position of each article
+
 0.6.1
 I don't need the 'checked' ternarys on the 'add above' and 'add below' radios
 Just need to be able to deselect all the others. Any change will submit the form,
@@ -12,6 +14,11 @@ falling back to whatever paint/move mode you were in, but now reflecting the new
 
 dupe-6 value = duplicate
 zero-6 value = collapse
+
+I think the iframe was just so I didn't lose form state when I reloaded the page
+But now that the form is generated from querystring, I think I can paint the form in the same context as the articles, what is the iframe doing for me otherwise?
+
+Make sure pointer events are disabled until the iframe accepts them, the frame should block everything
 
 0.7.0
 
@@ -49,3 +56,14 @@ crystollographic grid for memorable data-compositions
 
 How can I turn a point group into a NURB surfaces so that they deform or average into more biologic forms
 Like Hunderwasser said, to start molding the architecture
+
+// if you've never seen it before, it might as well be magic
+// dialing up dimensions is just making room for more unique shadows
+// the more complex the polyhedra, the more faces
+// even by having the honeycomb in the first place you get a virtually 
+
+// fourier transform soundwave -> font settings : the 'entropy' of the signal is related to weight
+// A very pure or whispery / hf voice occupies little of the harmonic axis. bias towards lower voice.
+// Basically a measure of richness vs 'thinness', thin font weight for averaged fourier samples with small std dev
+
+// 

@@ -88,7 +88,8 @@ http.createServer((req, res) => {
                 {"body": [
                     {"iframe": {"name": "frame", "frameborder": "0"}},
                     // maybe update the form attripbute  
-                    form(paramarray, options)
+                    form(paramarray, options),
+                    {"script": {"src": "/source/js/bindframe.js"}}
                 ]}
             ]))
         break
@@ -106,7 +107,7 @@ http.createServer((req, res) => {
             ]))
         break
         default:
-                res.writeHead(200, {'Content-Type': mimetypes[ext] || mimetypes[undefined] })
+                res.writeHead(200, {'Content-Type': mimetypes[ext] || "text/plain" })
                 fs.createReadStream('.' + pathname) // maybe .. ?
                 .on('error', err => res.end('404'))
                 .pipe(res) // compress it here if you want

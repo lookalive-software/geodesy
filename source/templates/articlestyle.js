@@ -44,8 +44,8 @@ module.exports = { "style": {
 		// "height": "0",
 		"overflow":"visible", // default ?
 		// this x / y offset needs to be multiplied by art... 
-		"left": "calc(50vw + 1px * calc(var(--xcent) * var(--wallx) * var(--zoom)))", // + to go left to right
-		"top":  "calc(50vh - 1px * calc(var(--ycent) * var(--wally) * var(--zoom)))", // - to go bottom to top
+		"left": "calc(50vw + 1px * calc(calc(var(--xstep) + var(--xcent)) * var(--wallx) * var(--zoom)))", // + to go left to right
+		"top":  "calc(50vh - 1px * calc(calc(var(--ystep) + var(--ycent)) * var(--wally) * var(--zoom)))", // - to go bottom to top
 		// "top": "50vh",
 		"filter": "blur(calc(var(--blur) * 1px))",
 		// "opacity": "var(--opacity)",

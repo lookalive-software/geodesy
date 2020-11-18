@@ -1,4 +1,5 @@
 module.exports = function(paramarray, options){
+    // console.log("FORM", paaramarray)
     return {"form": {
         "target": "frame",
         "action": "paramarray",

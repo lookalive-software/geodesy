@@ -61,6 +61,7 @@ module.exports = {
             "border": "3px solid #5e5e5e", 
             "border-bottom": "0",
             "padding": "1px",
+            "position": "relative",
             "top": "5px"
         },
         // give the selected tab a look of continuity with the fieldset, tab-style

@@ -33,7 +33,7 @@ module.exports = {
         },
         // this will be the tab button
 
-        "menu > [name=\"mode\"]": {
+        "menu > [name=\"mode\"], menu [name=\"cmd\"]": {
             "width": "50%",
             "position": "relative" // stacking order hack to overlap shadow
         },
@@ -64,6 +64,7 @@ module.exports = {
             "position": "relative",
             "top": "5px"
         },
+
         // give the selected tab a look of continuity with the fieldset, tab-style
         "[mode=\"paint\"] [value=\"paint\"], [mode=\"move\"] [value=\"move\"]": {
             "border": "3px solid #5e5e5e", 
@@ -77,9 +78,8 @@ module.exports = {
             "border-bottom": "0",
             "padding": "1px",
             "top": "5px"
-        },
-
-        "fieldset": {
+        }
+,        "fieldset": {
             "margin-bottom":"10px",
 
             "display":"flex",
@@ -96,19 +96,14 @@ module.exports = {
             "border": "3px solid #5e5e5e",
             "padding": "2px"
         },
-
-        // except for 
         "label, section":{
             "display":"flex",
             "justify-content":"space-between",
             "white-space":"nowrap",
             "align-items":"center",
-            "margin-bottom":"5px"
+            // "margin-bottom":"5px"
+            "padding": "2px" // decided I prefered all around padding to 5px margin
         },
-        // "#linearpaint, #drawerase": {
-        //     "justify-content":"center"
-        // },
-
         "label > *, section > *": {
             "margin": "2px 4px"
         },

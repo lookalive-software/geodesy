@@ -30,7 +30,7 @@ function bbox2topleft([x1, y1, x2, y2]){ return [x1, y1, x2 - x1, y2 - y1]} /* m
 
  */
 
-module.exports = function(params /* articleparams */){
+module.exports = function(params /* articleparams */, index, arrayref){
     // bump shells up to the minumum needed to fill min wallpaper
     // so far these are the params needed 
     console.log(params)
@@ -103,6 +103,13 @@ module.exports = function(params /* articleparams */){
     let maskpolygons = turf.featureCollection(maskedgeometry.map(
         ({pts}) => turf.polygon([pts])
     ))
+    // could write to arrayref, basically if this element is not a wallpaper, append its bbox to a list, and take the bbox of all the bboxes so far
+    // basically if(unionized) arrayref.artbox ? arrayref.artbox.push(articlebbox) : (arrayref.artbox = [])
+    // the caller of paintarticle can check the artbox of the array and use that to describe the size of the body
+    // dont forget to scale up by pixel amount
+    // and dont forget to apply xstep ystep xcent ycent -- multipliers of wallx wally that determine the actual position of the bbox
+    // so calc the bbox, apply transforms, and then push and grab the global bbox
+    // set global bbox to body
 
     let articlebbox = turf.bbox(allpolygons) // returns [minx, miny, maxx, maxy] of bounding box
     let sectionbbox = turf.bbox(maskpolygons)
@@ -231,6 +238,7 @@ module.exports = function(params /* articleparams */){
         "style": cssvars, // mostly vars 
         "childNodes": [ // section gets psuedo elements to place float shapes in the vicinity of flowed text inside section
             {"section": {
+                "title": "article " + index, // TODO replace with params.title once it exists
                 "type": type,
                 "style": {
                     /* overwrites the parents assignement to a mask to frame the content of section */
@@ -257,7 +265,7 @@ module.exports = function(params /* articleparams */){
                         case "embed":
                             return [{[embedtag]: {
                                 // autoloop and autoplay for video
-                                "autoplay": "true",
+                                // "autoplay": "true",
                                 "loop": "true",
                                 // "allow":"camera;microphone", for webcam
                                 "src": embedurl

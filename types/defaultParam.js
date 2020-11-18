@@ -18,6 +18,7 @@ module.exports = Object.freeze({
         "--ystep": 0, // -Inf < 1x < Inf
         "--xcent": 0, // 0 < 0.01x < 1 -- determines partial offset, between alignments
         "--ycent": 0, // 0 < 0.01x < 1
+        "--spin": 0, // 0 < 15x < 360
         // modal tabs
         "type": "net", // text || embed
         // case embed
@@ -33,10 +34,13 @@ module.exports = Object.freeze({
             // line height ? 0em to 4em?
         "--fontsize": 10, // 1 < 1x < 25
         "--margin": 0.1, // 0 < 0.05x < 0.5
+        "--align": "justify", // justify | left | center | right // TEXT-ALGIN
+        "--hght": 1, // 0.5 < 0.1x < 3 // LINE HEIGHT 
         "--MONO": 0, // 0 < 0.05x < 1 -- 0 is sans, 1 is monospace
         "--CASL": 0.5, //  0 < 0.05x < 1 -- 0 is times roman 1 is comic sans
         "--wght": 500, // 300 < 20x < 1000
         "--slnt": -5, // -15 < 0.25x < 0 -- -15 is italic, 0 is no slant
+
         // case jali
         "xwindow": 1, // 1 < 1x < Inf
         "ywindow": 1, // 1 < 1x < Inf

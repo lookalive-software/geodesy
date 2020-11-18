@@ -94,6 +94,8 @@ http.createServer((req, res) => {
             ]))
         break
         case 'paramarray': 
+            // let body = paramarray.map(paintarticle)
+            // let {width, height} = body.bbox || {} // undefined at first // I have to think about whether that's a different center to worry about, center of bbox world starts at 50,50,...
             res.end(elementary([
                 {"head": [
                     // this should also be the favicon and metacharset and all
@@ -103,7 +105,12 @@ http.createServer((req, res) => {
                     globalstyle,
                     articlestyle
                 ]},
-                {"body": paramarray.map(paintarticle)}
+                // instead of 
+                // {"body": paramarray.map(paintarticle)}
+                {"body": {
+                    // width, height, top, left...
+                    "childNodes": paramarray.map(paintarticle)
+                }}
             ]))
         break
         default:

@@ -225,6 +225,12 @@ module.exports = function(paramarray, options){
                                     {"input":{
                                         "name":`--ycent-${n}`,"type":"range","min":"0","max": "1","step":"0.01","value": param["--ycent"]
                                     }}
+                                ]},
+                                {"label": [
+                                    "spin", 
+                                    {"input":{
+                                        "name":`--spin-${n}`,"type":"range","min":"0","max": "360","step":"15","value": param["--spin"]
+                                    }}
                                 ]}
                         ]}},
                         // {"div": {
@@ -361,18 +367,44 @@ module.exports = function(paramarray, options){
                                             {"label": [
                                                 "size", 
                                                 {"input":{
-                                                    "name":`--fontsize-${n}`,"type":"range","min":"1","max": "25","step":"1","value": param["--fontsize"]
+                                                    "name":`--fontsize-${n}`,"type":"range","min":"1","max": "25","step":"0.1","value": param["--fontsize"]
                                                 }}
                                             ]},
                                             {"label": [
                                                 "margin", // maybe margin happens in percentage
                                                 // replace this with "shape outside"...
                                                 {"input":{
-                                                    "name":`--margin-${n}`,"type":"range","min":"0","max": "0.5","step":"0.05","value": param["--margin"]
+                                                    "name":`--margin-${n}`,"type":"range","min":"0","max": "0.5","step":"0.01","value": param["--margin"]
                                                 }}
                                             ]},
-                                            // justify, top center bottom, left center right?
                                             {"label":[
+                                                "height",
+                                                {"input": {
+                                                    "type":"range","name":`--hght-${n}`,"min":"0.5","max":"3","step":"0.1","value": param["--hght"]
+                                                }}
+                                            ]},
+                                            {"label":[
+                                                "align",
+                                                {"select": {
+                                                    // justify, top center bottom, left center right?
+                                                    "name": `--align-${n}`,
+                                                    // 'square', 'pyritohedron', 'p4octagon', 'honeycomb', 'doublesquares', 'alternatetriangles'
+                                                    "value": param.motif,
+                                                    "childNodes": [
+                                                        "justify",
+                                                        "left",
+                                                        "center",
+                                                        "right"
+                                                    ].map(motifname => (
+                                                        {"option": {
+                                                            "value": motifname,
+                                                            "childNodes": [motifname],
+                                                            [param.motif == motifname ? "selected": ""]: ""
+                                                        }}
+                                                    ))
+                                                }}
+                                            ]},
+                                           {"label":[
                                                 "sans",
                                                 {"input": {
                                                     "type":"range","name":`--MONO-${n}`,"min":"0","max":"1","step":"0.05","value": param["--MONO"]

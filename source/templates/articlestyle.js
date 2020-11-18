@@ -49,8 +49,8 @@ module.exports = { "style": {
 		// "top": "50vh",
 		"filter": "blur(calc(var(--blur) * 1px))",
 		// "opacity": "var(--opacity)",
-		"transform": "scale(var(--zoom))"
-
+		// "transform": "scale(var(--zoom))",
+		"transform": "rotate(calc(1deg * var(--spin))) scale(var(--zoom))"
 	},
 	"article:before": {
 		// maybe apply a polygon mask to demarcate the size of the wallpaper
@@ -65,11 +65,13 @@ module.exports = { "style": {
 		"z-index":"1"
 	},
 	"section": {
-		"text-align":"justify", // left | center | right | justify
+		"text-align":"var(--align)", // left | center | right | justify
 		"overflow": "hidden" // fixed an issue with iframe showing through maskk
 	},
 	"section > span": {
 		"font-family": "recursive",
+		"white-space": "pre-wrap",
+		"line-height": "var(--hght)",
 		"font-size": "calc(5px * var(--fontsize))",
 		"color": "var(--fontcolor)",
 		"opacity": "var(--fontopacity)",

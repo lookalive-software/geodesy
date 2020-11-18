@@ -28,28 +28,14 @@ module.exports = function(paramarray, options){
                 // focus fieldset
                 // focus=focus will get overwritten with focus=2 or whatever
                 {"fieldset": [
-                    {"input": {
-                        "type": "radio",
-                        "name": "focus",
-                        "value": "null",
-                        "style": {"display": "none"}, // just hear to steal focus from the other radio buttons.
-                        [ options.focus == "null"  ? "checked" : "" ]: ""
-                    }},
-                    // {"section": [
-                    //     {"input": {
-                    //         "type":"radio",
-                    //         "name":"focus",
-                    //         "value":"-1",
-                    //         "id": "-1",
-                    //         [ options.focus == "-1"  ? "checked" : "" ]: "" 
-                    //     }},
-                    //     {"label": {
-                    //         "for":"-1",
-                    //         "childNodes":[
-                    //             "add article above"
-                    //         ]
-                    //     }},
-                    // ]},
+                    // hidden input is/was for defocus mode, where none of the radios should be checked
+                    // {"input": {
+                    //     "type": "radio",
+                    //     "name": "focus",
+                    //     "value": "null",
+                    //     "style": {"display": "none"}, // just hear to steal focus from the other radio buttons.
+                    //     [ options.focus == "null"  ? "checked" : "" ]: ""
+                    // }},
                     ...paramarray.map((param, index) => (
                         {"section": [
                             {"input": {
@@ -66,18 +52,24 @@ module.exports = function(paramarray, options){
                                 ]
                             }}
                         ]}
-                    )),
-                    {"section": [
-                        {"input": {
-                            "type":"radio",
-                            "name":"focus",
-                            "value": paramarray.length,
-                            "id": paramarray.length,
-                            [ options.focus == paramarray.length  ? "checked" : "" ]: "" 
-                        }},
-                        {[`label for="${paramarray.length}"`]:["add article below"]},
-                    ]}
+                    ))
                 ]},
+                {"fieldset": [{"section": [
+                    {"input": {
+                        "type":"submit",
+                        "name": "cmd",
+                        "value": "dupe",
+                        "formtarget": "_self", // override 'frame'
+                        "formaction": "form", // override 'paramarray'
+                    }},
+                    {"input": {
+                        "type":"submit",
+                        "name": "cmd",
+                        "value": "drop",
+                        "formtarget": "_self", // override 'frame'
+                        "formaction": "form", // override 'paramarray'
+                    }}
+                ]}]},
                 // paint button
                 {"input": {
                     "type":"submit",
@@ -275,9 +267,8 @@ module.exports = function(paramarray, options){
                         // }},
                         {"fieldset": {
                             // text | embed | jālī ( જાળી )
-                            "style": {"display": n == options.focus ? "initial": "none"},
+                            // "style": {"display": n == options.focus ? "initial": "none"},
                             "childNodes": [
-
                                 ...(function(){
                                     switch(param.type){
                                         case 'embed':

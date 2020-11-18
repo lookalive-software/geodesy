@@ -23,16 +23,14 @@ form.addEventListener('submit', event => {
             form.setAttribute('mode', event.submitter.value ) // switch modes
             hiddenmode.setAttribute('value',  event.submitter.value) // set value 
             return false // to ignore form submission 
-        // have to make a dupe and a drop button 
-        // 
-        // case "defocus":
-        //     event.preventDefault()
-        //     let newfocus = document.querySelector('[type="radio"][name="focus"]:checked').value
-        //     form.setAttribute("focus", newfocus)
-        //     hiddenfocus.setAttribute("value", newfocus)
-        //     document.querySelectorAll('div[focused]')
-        //             .forEach((div, index) => div.setAttribute("focused", newfocus == index)) // true or false
-        //     return false // to ignore form submission 
+        case "defocus":
+            event.preventDefault()
+            let newfocus = document.querySelector('[type="radio"][name="focus"]:checked').value
+            form.setAttribute("focus", newfocus)
+            hiddenfocus.setAttribute("value", newfocus)
+            document.querySelectorAll('div[focused]')
+                    .forEach((div, index) => div.setAttribute("focused", newfocus == index)) // true or false
+            return false // to ignore form submission 
     }
 })
 

@@ -2,7 +2,7 @@ module.exports = Object.freeze({
     // my actual fallback, well this is like the old idea of a home config file
     // but sure I'll accept a type-checked JSON file 
         // fieldset for=paint
-        "motif": "honeycomb", // || square, pyritohedron, p4octagon, doublesquares
+        "motif": "square", // || square, pyritohedron, p4octagon, doublesquares
         "shells": 5, // || 1 50 1
         "strapwork": 10, // 0 50 1
         "bitmask": 0, // some sum of binary vector, no max. must be int I guess.

@@ -149,6 +149,11 @@ module.exports = {
             "mask-image": "linear-gradient(to right, transparent, black)",
             "-webkit-mask-image": "linear-gradient(to right, transparent, black)",
             "margin-top": "-15px"
+        },
+        "textarea": {
+            "min-width": "176px",
+            "max-width": "176px",
+            "min-height": "9em"
         }
     }
 }

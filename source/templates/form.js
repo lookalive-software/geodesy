@@ -15,7 +15,7 @@ module.exports = function(paramarray, options){
             }},
             // one 'focus' button
             {"menu": [
-                {"input": {"type":"submit", "value": "update"}},
+                {"noscript": [{"input": {"type":"submit", "value": "update"}}]}, // noscript fallback to manually submit the form
                 {"input": {
                     "type":"submit",
                     // if I'm already defocused don't submit with this name...

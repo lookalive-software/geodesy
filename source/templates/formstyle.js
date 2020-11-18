@@ -32,9 +32,7 @@ module.exports = {
             // "border":"2px solid rgba(0,0,0,0.2)",
         },
         // this will be the tab button
-        "menu > [name=\"defocus\"], menu > [value=\"update\"]": {
-            "width": "100%"
-        },
+
         "menu > [name=\"mode\"]": {
             "width": "50%",
             "position": "relative" // stacking order hack to overlap shadow
@@ -55,17 +53,29 @@ module.exports = {
         "form[mode=\"move\"] fieldset[for=\"paint\"], form[mode=\"paint\"] fieldset[for=\"move\"]": {
             "display": "none"
         },
+
+        "menu > [name=\"defocus\"], menu > [value=\"update\"]": {
+            "width": "100%"
+        },
+        "menu > [name=\"defocus\"]": {
+            "border": "3px solid #5e5e5e", 
+            "border-bottom": "0",
+            "padding": "1px",
+            "top": "5px"
+        },
         // give the selected tab a look of continuity with the fieldset, tab-style
         "[mode=\"paint\"] [value=\"paint\"], [mode=\"move\"] [value=\"move\"]": {
             "border": "3px solid #5e5e5e", 
             "border-bottom": "0",
-            "top": "3px"
+            "padding": "1px",
+            "top": "5px"
         },
-
         // same thing for the other three buttons
         ".text [value=\"text\"], .embed [value=\"embed\"], .net [value=\"net\"]": {
+            "border": "3px solid #5e5e5e", 
             "border-bottom": "0",
-            "top": "3px"
+            "padding": "1px",
+            "top": "5px"
         },
 
         "fieldset": {
@@ -80,7 +90,10 @@ module.exports = {
             "font-weight": "bold",
             // from a "neumorphic" generator
             "background": "linear-gradient(145deg, #f0f0f0, #cacaca)",
-            "box-shadow":  "13px 13px 26px #a1a1a1, -13px -13px 26px #ffffff"
+            "box-shadow":  "13px 13px 26px #a1a1a1, -13px -13px 26px #ffffff",
+
+            "border": "3px solid #5e5e5e",
+            "padding": "2px"
         },
 
         // except for 

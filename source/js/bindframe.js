@@ -2,6 +2,9 @@ let form = document.querySelector('form')
 let frame = document.querySelector('iframe')
 let defocus = document.querySelector('input[name="defocus"]')
 
+let hiddenmode = document.querySelector('input[type="hidden"][name="mode"]')
+let hiddenfocus = document.querySelector('input[type="hidden"][name="focus"]')
+
 console.log(defocus)
 
 form.submit()
@@ -14,17 +17,29 @@ form.submit()
 
 let lasttimeout = 0
 
-// document.querySelectorAll('textarea').forEach(textarea => {
-//     // textarea can have a target
-//     // reach into the frame
-//     frame.contentDocument.body.querySelector()
-// })
+
+form.addEventListener('submit', event => {
+    console.log("SUBMIT", event)
+    switch(event.submitter.name){
+        case "mode":
+            event.preventDefault()
+            form.setAttribute('mode', event.submitter.value ) // switch modes
+            hiddenmode.setAttribute('value',  event.submitter.value) // set value 
+            return false // to ignore form submission 
+        case "defocus":
+            event.preventDefault()
+            let newfocus = document.querySelector('[type="radio"][name="focus"]:checked').value
+            form.setAttribute("focus", newfocus)
+            hiddenfocus.setAttribute("value", newfocus)
+            document.querySelectorAll('div[focused]')
+                    .forEach((div, index) => div.setAttribute("focused", newfocus == index)) // true or false
+            return false // to ignore form submission 
+    }
+})
 
 document.querySelectorAll('input, select, textarea').forEach(input => {
     input.addEventListener('input', event => {
         let key = event.target.name
-
-
         let hyphenpos = key.lastIndexOf('-')
         let varname = ~hyphenpos ? key.slice(0, hyphenpos) : key
         let artindex = ~hyphenpos ? key.slice(hyphenpos + 1) : null

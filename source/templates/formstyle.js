@@ -43,22 +43,25 @@ module.exports = {
             "width": "calc(100% / 3)",
             "position": "relative"
         },
-        "div.hide": {
+        "div[focused=\"false\"]": {
             "display": "none"
         },
+        // hide paint/move buttons when in defocus mode
+        "[focus=\"null\"] [value=\"paint\"], [focus=\"null\"] [value=\"move\"]": {
+            "display": "none"
+        },
+
         // hide the paint or move fieldset when its not needed
         "form[mode=\"move\"] fieldset[for=\"paint\"], form[mode=\"paint\"] fieldset[for=\"move\"]": {
             "display": "none"
         },
         // give the selected tab a look of continuity with the fieldset, tab-style
         "[mode=\"paint\"] [value=\"paint\"], [mode=\"move\"] [value=\"move\"]": {
+            "border": "3px solid #5e5e5e", 
             "border-bottom": "0",
             "top": "3px"
         },
-        // hide paint/move buttons when in defocus mode
-        "[focus=\"null\"] [value=\"paint\"], [focus=\"null\"] [value=\"move\"]": {
-            "display": "none"
-        },
+
         // same thing for the other three buttons
         ".text [value=\"text\"], .embed [value=\"embed\"], .net [value=\"net\"]": {
             "border-bottom": "0",

@@ -97,7 +97,8 @@ module.exports = function(paramarray, options){
                 ...paramarray.map((param, n) => (
                     {"div": { // this div is just a style wrapper to hide everything not focused
                     // what happens if an attribute value is nullish?
-                        "class": [options.focus == n ? "show" : "hide", param.type].join(" "),
+                        "class": param.type,
+                        "focused": options.focus == n, // true or false
                         "childNodes": [
                         {"fieldset": {
                             "for": "paint",

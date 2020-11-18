@@ -5,8 +5,6 @@ let defocus = document.querySelector('input[name="defocus"]')
 let hiddenmode = document.querySelector('input[type="hidden"][name="mode"]')
 let hiddenfocus = document.querySelector('input[type="hidden"][name="focus"]')
 
-console.log(defocus)
-
 form.submit()
 
 // the buffer sits underneath the frame
@@ -17,7 +15,6 @@ form.submit()
 
 let lasttimeout = 0
 
-
 form.addEventListener('submit', event => {
     console.log("SUBMIT", event)
     switch(event.submitter.name){
@@ -26,14 +23,16 @@ form.addEventListener('submit', event => {
             form.setAttribute('mode', event.submitter.value ) // switch modes
             hiddenmode.setAttribute('value',  event.submitter.value) // set value 
             return false // to ignore form submission 
-        case "defocus":
-            event.preventDefault()
-            let newfocus = document.querySelector('[type="radio"][name="focus"]:checked').value
-            form.setAttribute("focus", newfocus)
-            hiddenfocus.setAttribute("value", newfocus)
-            document.querySelectorAll('div[focused]')
-                    .forEach((div, index) => div.setAttribute("focused", newfocus == index)) // true or false
-            return false // to ignore form submission 
+        // have to make a dupe and a drop button 
+        // 
+        // case "defocus":
+        //     event.preventDefault()
+        //     let newfocus = document.querySelector('[type="radio"][name="focus"]:checked').value
+        //     form.setAttribute("focus", newfocus)
+        //     hiddenfocus.setAttribute("value", newfocus)
+        //     document.querySelectorAll('div[focused]')
+        //             .forEach((div, index) => div.setAttribute("focused", newfocus == index)) // true or false
+        //     return false // to ignore form submission 
     }
 })
 

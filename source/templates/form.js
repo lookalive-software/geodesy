@@ -105,6 +105,8 @@ module.exports = function(paramarray, options){
                                         "value": param.motif,
                                         "childNodes": [
                                             "square", 
+                                            "2to1brick",
+                                            "root13star",
                                             "pyritohedron",
                                             "p4octagon",
                                             "honeycomb", 

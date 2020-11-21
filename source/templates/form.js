@@ -58,14 +58,14 @@ module.exports = function(paramarray, options){
                     {"input": {
                         "type":"submit",
                         "name": "cmd",
-                        "value": "dupe",
+                        "value": "clone", // clone
                         "formtarget": "_self", // override 'frame'
                         "formaction": "form", // override 'paramarray'
                     }},
                     {"input": {
                         "type":"submit",
                         "name": "cmd",
-                        "value": "drop",
+                        "value": "pop", // pop
                         "formtarget": "_self", // override 'frame'
                         "formaction": "form", // override 'paramarray'
                     }}

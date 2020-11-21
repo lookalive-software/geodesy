@@ -31,14 +31,14 @@ let defaultArticle = () => Object.assign({}, defaultParam, {motif: choose(motifs
 
 function modifyParamArray(paramarray, options){
     switch(options.cmd){
-        case "dupe":
+        case "clone":
             // iterate from the end of the array, copying each element one index up until I hit the current focus, then copy that.
             for(var i = paramarray.length; i > options.focus; i--){
                 paramarray[i] = paramarray[i - 1]
             }
             options.focus++
         break
-        case "drop":
+        case "pop":
             // iterate through array, starting from the focused element to the end (less 1, since we're always reading the +1nth element in the body of the loop)
             for(var i = options.focus; i < (paramarray.length - 1); i++){
                 paramarray[i] = paramarray[i + 1]

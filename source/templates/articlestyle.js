@@ -31,8 +31,8 @@ module.exports = { "style": {
 		"pointer-events": "all",
 		// "frameborder": "0",
 		"opacity": "var(--fillopacity)",
-		"min-width": "100%", // min width to allow img to scale
-		"height": "100%",
+		"min-width": "100%", // min width & height to allow img to scale without distortion
+		"min-height": "100%",
 		"transform": "scale(var(--ifscale))",
 		"position": "absolute",
 		"right": "calc(var(--ifxoffset) * var(--ifscale) * 1%)", // + to go left to right

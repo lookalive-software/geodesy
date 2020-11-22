@@ -17,12 +17,16 @@ let lasttimeout = 0
 
 form.addEventListener('submit', event => {
     console.log("SUBMIT", event)
+    // event.submitter was added to chrome in version 81
+    // not available in safari or edge, so skip, will just have to do a hard reload
+    if(!event.submitter) return null
     switch(event.submitter.name){
         case "mode":
             event.preventDefault()
             form.setAttribute('mode', event.submitter.value ) // switch modes
             hiddenmode.setAttribute('value',  event.submitter.value) // set value 
             return false // to ignore form submission 
+        // 
         case "defocus":
             event.preventDefault()
             let newfocus = document.querySelector('[type="radio"][name="focus"]:checked').value

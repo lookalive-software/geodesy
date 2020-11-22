@@ -1,0 +1,10 @@
+[
+	{"video": {
+		"autoplay": "true",
+		"id": "webcam",
+		"width": "100%"
+	}},
+	{"script": {
+		"src": "/source/js/capture.js"
+	}}
+]

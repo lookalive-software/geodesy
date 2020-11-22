@@ -291,7 +291,9 @@ module.exports = function(paramarray, options){
                                                 {"label":{
                                                     "for":`iframe-${n}`,
                                                     "childNodes": ["<iframe>"]
-                                                }},
+                                                }}
+                                            ]},
+                                            {"section": [
                                                 {"input": {
                                                     "type":"radio",
                                                     "name":`embedtag-${n}`,
@@ -303,6 +305,8 @@ module.exports = function(paramarray, options){
                                                     "for":`video-${n}`,
                                                     "childNodes": ["<video>"]
                                                 }},
+                                            ]},
+                                            {"section": [
                                                 {"input": {
                                                     "type":"radio",
                                                     "name":`embedtag-${n}`,
@@ -313,6 +317,19 @@ module.exports = function(paramarray, options){
                                                 {"label":{
                                                     "for":`img-${n}`,
                                                     "childNodes": ["<img>"]
+                                                }}
+                                            ]},
+                                             {"section": [
+                                                {"input": {
+                                                    "type":"radio",
+                                                    "name":`embedtag-${n}`,
+                                                    "value":"webcam",
+                                                    "id": `webcam-${n}`,
+                                                    [ param.embedtag === "webcam" ? "checked" : ""]: ""
+                                                }},
+                                                {"label":{
+                                                    "for":`webcam-${n}`,
+                                                    "childNodes": ["webcam"]
                                                 }}
                                             ]},
                                             {"label": [

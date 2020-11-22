@@ -1,0 +1,54 @@
+what happens in paintarticle?
+
+Well first I grab all the params whose key starts with '--' and create a new object 'cssvars'
+
+I use motif+shells to get the polygon data from cachelattice.js
+
+I get an array of true and false values from the bitmask param by converting it to binary, splitting the ones and zeros, and mapping over with Number/Boolean to get trues and falses
+
+cachelettice.shells is an array of arrays
+If I apply the bitmask to the top level array, I get shell-by-shell maskedgeometry, or if I flatten it first I can apply the bitmask on a polygon-by-polygon basis
+
+Here's a surprising thing:
+JS can coerce an empty array to the number 0
+JS can coerce a single element array to a number
+Coercing any longer array to number results in NaN
+
+turf.polygon takes an array of [x,y] tuples and returns a polygoncollection
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Types:
+	how about cssvars are always keys with -- and strings as values, all these vars are on the defaultparams so should have a whole param type
+
+	boolmask :: Boolean[]
+
+	flatgeometry :: Polygon[]
+	maskgeometry :: Polygon[] (?: returns flat)
+
+	allpolygons  :: polygoncollection 	
+	maskpolygons :: polygoncollection
+
+	{features: [
+		{geometry: [
+			{coordinates: [[x,y]]}
+		]}
+	]}
+
+	articlebbox/sectionbbox -> (-90/90)[4]
+	viewbox -> csspixel[4]
+
+

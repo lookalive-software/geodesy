@@ -21,13 +21,13 @@ module.exports = { "style": {
 		"height": "100%",
 		"shape-margin": "calc(var(--margin) * 100%)",
 	},
-	"section[type=\"embed\"]": {
+	"[type=\"embed\"] section": {
 		"pointer-events": "none",
 	},
 	// iframe should only exist in embed mode, no?
 	// last-child in embed mode is going to be a video, 
 	// "[mode=\"embed\"] iframe, [mode=\"embed\"] img, [mode=\"embed\"] video": {
-	"[type=\"embed\"] > *": {
+	"[type=\"embed\"] section > *": {
 		"pointer-events": "all",
 		// "frameborder": "0",
 		"opacity": "var(--fillopacity)",
@@ -35,34 +35,34 @@ module.exports = { "style": {
 		"min-height": "100%",
 		"transform": "scale(var(--ifscale))",
 		"position": "absolute",
-		"right": "calc(var(--ifxoffset) * var(--ifscale) * 1%)", // + to go left to right
-		"top":  "calc(var(--ifyoffset) * var(--ifscale) * 1%)", // - to go bottom to top
+		"right": "calc(var(--ifxoffset) * var(--ifscale) * -1%)", // + to go left to right
+		"top":  "calc(var(--ifyoffset) * var(--ifscale) * -1%)", // - to go bottom to top
 		"z-index": "-1"
 	},
+	// section[type="net|text|embed"]
+	// body will have to have absolute size now for articles to be positioned correctly
+
 	"article": {
 		// "width": "0",
 		// "height": "0",
 		"overflow":"visible", // default ?
 		// this x / y offset needs to be multiplied by art... 
-		"left": "calc(50vw + 1px * calc(calc(var(--xstep) + var(--xcent)) * var(--wallx) * var(--zoom)))", // + to go left to right
-		"top":  "calc(50vh - 1px * calc(calc(var(--ystep) + var(--ycent)) * var(--wally) * var(--zoom)))", // - to go bottom to top
+		"left": "calc(50% + 1px * calc(calc(var(--xstep) + var(--xcent)) * var(--wallx) * var(--zoom)))", // + to go left to right
+		"top":  "calc(50% - 1px * calc(calc(var(--ystep) + var(--ycent)) * var(--wally) * var(--zoom)))", // - to go bottom to top
 		// "top": "50vh",
 		"filter": "blur(calc(var(--blur) * 1px))",
 		// "opacity": "var(--opacity)",
 		// "transform": "scale(var(--zoom))",
-		"transform": "rotate(calc(1deg * var(--spin))) scale(var(--zoom))"
+		"transform": "rotate(calc(1deg * var(--spin)))"
 	},
-	"article:before": {
-		// maybe apply a polygon mask to demarcate the size of the wallpaper
-		// then make it a j/k kind of thing to increase the h z scalar of the wallpaper
-		"top": "calc(var(--artrad) / -2 - 20px)",
-		"left": "calc(var(--artrad) / -2 - 20px)",
-		"width": "calc(var(--artrad))",
-		"height": "calc(var(--artrad))",
-		"border-radius": "100%",
-		// eventually instead of a border it will be a embedded svg
-		// "border": "20px solid black",	
-		"z-index":"1"
+	"article[type=\"net\"]": {
+		// there's a smaller width/height if it helps rendering,
+		// maybe its the diagonal of the max(vh, vh) square that would let it rotate
+		"left": "-100%",
+		"top": "-100%",
+		// left 50% for every extra 100%
+		"width": "300%",
+		"height": "300%"
 	},
 	"section": {
 		"text-align":"var(--align)", // left | center | right | justify
@@ -89,16 +89,40 @@ module.exports = { "style": {
 	},
 	"section, article:after": {
 		// there's a bleed over on
-		"width": "calc(var(--width) - 1px)",
-		"height": "calc(var(--height) - 1px)",
-		"top": "var(--top)",
-		"left": "var(--left)",
+		// well multiply one piel by the scale
+		"width": "calc(var(--width) * var(--zoom))",
+		"height": "calc(var(--height) * var(--zoom) )", // add zoom here!
+		// this is relative to the article, which is centered
+		// maybe it makes more sense for these to be 100%
+		// and the article be scaled and positioned?
+		"top": "calc(var(--top) * var(--zoom))",
+		"left": "calc(var(--left) * var(--zoom))",
 		"mask-image": "var(--mask)",
 	    "-webkit-mask-image": "var(--mask)",
+	    // instead of center
+	    // we'll do calc(50% + --x/ycent)
+	    // steps don't do anything for wallpaper
+	    // for medallions, this will always be center
+	    // xycent and step are applied to the article.
 	    "-webkit-mask-position": "center",
-	    "mask-image": "var(--mask)",
 		"mask-position": "center",
+
+		"mask-size": "calc(var(--width) * var(--zoom))",
+		"-webkit-mask-size": "calc(var(--width) * var(--zoom))",
 		"display":"block" // to get floated widths correct
+	},
+	// more specific, cascading override for net articles -- just fill the screen
+	// remember mask-size can be used with zoom
+
+	"[type=\"net\"] section, [type=\"net\"]:after":{
+		"width": "100%",
+		"height": "100%",
+		"left": "0",
+		"top": "0",
+		// any movement of the wallpaper should be applied to:
+
+		"mask-position": "calc(50% + var(--width) * var(--xcent)) calc(50% + var(--height) * var(--ycent))",
+		"-webkit-mask-position": "calc(50% + var(--width) * var(--xcent)) calc(50% + var(--height) * var(--ycent))"
 	},
 	"article:after": {
 		"background": "var(--strokecolor)",

@@ -70,22 +70,12 @@ module.exports = function(params /* articleparams */, index, arrayref){
 
     // and then pull some styles out...
     let cssvars = Object.fromEntries(Object.entries(params).filter(([key]) => ~key.indexOf('--')))
-    // applied to the svg 
-
-    // wallpaper = (wallpaper == "wallpaper") // overwrite with true or false
-
     let lattice = cachelattice({motif, shells})
     // transform bitmask:string to a boolmask:Boolean[]
     // doesnt support e notation
+
     let boolmask = BigInt(bitmask).toString(2).split('').map(Number).map(Boolean).reverse() // convert 1 and 0 strings into true and false values
 
-    // if(boolmask.every(v => !v)){ // if every value is false (!false returns true) then we're dealing with an empty array
-    //     boolmask = boolmask.map(v => !v) // flip all of them to true
-    // } // that just means 0 equals 1, but other bitmasks might leave you without geometry
-
-
-// slice the boolmask down to however many elements you actually have -- 
-// have I 
     let flatgeometry = lattice.shells.flat()
     let maskedgeometry = (maskmode === 'nested')
         ? lattice.shells.filter((_, index) => boolmask[index]).flat() // returns true or false for that 'order' of the binary boolmask
@@ -105,45 +95,16 @@ module.exports = function(params /* articleparams */, index, arrayref){
     ))
 
     // console.log("MASKPOLYGON", maskpolygons.features.map(e => e.geometry.coordinates))
-
-    // could write to arrayref, basically if this element is not a wallpaper, append its bbox to a list, and take the bbox of all the bboxes so far
-    // basically if(unionized) arrayref.artbox ? arrayref.artbox.push(articlebbox) : (arrayref.artbox = [])
-    // the caller of paintarticle can check the artbox of the array and use that to describe the size of the body
-    // dont forget to scale up by pixel amount
-    // and dont forget to apply xstep ystep xcent ycent -- multipliers of wallx wally that determine the actual position of the bbox
-    // so calc the bbox, apply transforms, and then push and grab the global bbox
-    // set global bbox to body
-
     let articlebbox = turf.bbox(allpolygons) // returns [minx, miny, maxx, maxy] of bounding box
     let sectionbbox = turf.bbox(maskpolygons)
 
-    console.log("TURF:BBOX", articlebbox)
-
-    // 
-    // let artviewbox = bbox2topleft(articlebbox).map(n => n * radius)
-
     let [wallx, wally] = lattice.meta.wallpaper
 
-    // let minradius = pythagoras(wallx, wally)
-
     Object.assign(cssvars, {
-        // artrad is a way to decide how large of a circle would circumscribe the article
-        // for ::Before menu...  
-        // "--artrad": pythagoras(artviewbox[0], artviewbox[1]) * 2 + 'px',
-        // "--minrad": minradius * radius + 'px'
         "--wallx": 2 * wallx * radius, // multiply by 2 because wallpaper is just half of the box.
         "--wally": 2 * wally * radius
     }) // maybe the other one is secleft, secheight... al, at, aw, ah, sl, st, sw, sh
 
-    // DELETING shortestside / basismultiple was an attempt to automatically find a good wallpaper viewbox
-    // but now I'm just letting the form choose it with xwindow/ywindow
-    // let shortestside = articlebbox.map(Math.abs).reduce((a,b) => Math.min(a,b))
-    // if the bbox of the shells is less than even one of my wallpaperes, then default to one wallpaper
-    // let basismultiple = Math.max(1, Math.floor(shortestside / minradius)) //  scalar int
-    // could replace this with a form input to change viewbox
-    // console.log("MINRAD", minradius)
-    // console.log("SHORTESTSIDE", shortestside)
-    // console.log("BASISMULT", basismultiple)
     let atomgeometry, uniongeometry
         atomgeometry = uniongeometry = maskedgeometry.map(({pts}) => pts)
     // so i'll set uniongeometry equal to atomgeometry,
@@ -152,14 +113,15 @@ module.exports = function(params /* articleparams */, index, arrayref){
         let closePolygon = polygon => polygon.concat([polygon[0]])
         // first have to get it into a [[[x,y]]] array of polygons which are arrays of xytuples
         // turf needs each list of pts to end with the same point it begins with
-        let turfpolygons = atomgeometry.map(pts => turf.polygon([closePolygon(pts)]))
+        let turfpolygons = atomgeometry.map(pts => turf.polygon([pts]))
         let scaledpolygons = turfpolygons.map(polygon => turf.transformScale(polygon, 1 + parseFloat(stepover)))
         let cleanPolygons = scaledpolygons.map(polygon =>
             turf.truncate(polygon, {precision: parseFloat(precision)})
         )
 
         let union = turf.union(...cleanPolygons)
-
+        // I hate this but sometimes the geometry comes back as deeply nested arrays, I think if there's a whole?
+        // in which case I have to flatten it. Maybe there's a cleaner way to do this but I'm eventually writing my own union algo that just looks at shared edges
         if(union.geometry){
             let {coordinates} = union.geometry
             // console.log("COORD LENGTH", coordinates.length)
@@ -175,78 +137,82 @@ module.exports = function(params /* articleparams */, index, arrayref){
         } else {
             console.error("NO GEOMETRY???")
         }
-        // console.log("atomgeometry", atomgeometry)
-        // console.log("uniongeometry", uniongeometry)
-        // just need to keep it in {m,x,y,spin,pts: [[x,y]]} format -- wrong
-        // if you want {x,y,spin,pts} for each polygon have to run bbox, then average the bbox pts and measure atan between that and origin 
-        // I only use x and y when positioning standalone sections -- svg just needs viewbox specified, polygons use their own pts
     } // else its atomized, no change needed to geometry
+    
+    // wallx/y is minimum wallpaper size, whose value is one quadrant of a four quadrant euclidian plane
+    // so I have to multiple by 2 to 
+    // x/ywindow is the number of steps to multiply by to increase the unitcell
+    let [minx, miny, width, height] = bbox2topleft(sectionbbox)
+    let viewbox = (wallpaper ? [
+        wallx * xwindow * -1, // min x
+        wally * ywindow * -1, // min y
+        wallx * xwindow * 2,
+        wally * ywindow * 2
+    ] : [
+        minx - 1 * strapwork / 2, // farther left
+        miny - 1 * strapwork / 2, // farther up
+        width + 1 * strapwork, // wider
+        height + 1 * strapwork // taller
+    ]).map(n => shorten(n * radius))
+    // after calculating the viewbox of each wallpaper and medallion
+    // I can set the values of left top width height, but this 
+    // these vars are used directly to position the medallions
+    // but the wallpapers override -- be 100% of body 
+    Object.assign(cssvars, {
+        "--left":   viewbox[0] + 'px', // ha doesnt matter if its a square
+        "--top":    viewbox[1] + 'px', // this might need to be flipped??
+        "--width":  viewbox[2] + 'px',
+        "--height": viewbox[3] + 'px'
+    })
+    // at the end I can iterate through the article[] and determine by bbox
+    // get the largest |x| value and * 2 use that for width of body
+    // get the largest |y| value and *2 use that for height of body
+    // since all the dimensions are relative to a an origin, and x and y are extended equally positive and negative
+    // I believe I'll be able to keep articles' default position 50% 50% + modifiers
+    // 
 
-    // after you calculate the norm of the viewbox, pythagoraas(viewbox0 viewbox1),
-    // filter everyone out with a larger norm than that
-    // so that when painting the wallpaper, I won't catch any edges from polygons whose centers are further away from the center
-    // than my furthest diagonal, viewbox[0] viewbox[1]
-
-    // viewbox = (wallpaper ? [
-    //     wallx * xwindow * -2, // min x
-    //     wally * ywindow * -2, // min y
-    //     wallx * xwindow * 4,
-    //     wally * ywindow * 4
-    // ] : [
-    //     minx - 1 * strapwork / 2, // farther left
-    //     miny - 1 * strapwork / 2, // farther up
-    //     width + 1 * strapwork, // wider
-    //     height + 1 * strapwork // taller
-    // ]).map(n => shorten(n * radius))
-
-    // Object.assign(cssvars, {
-    //     "--left":   viewbox[0] + 'px', // ha doesnt matter if its a square
-    //     "--top":    viewbox[1] + 'px', // this might need to be flipped??
-    //     "--width":  viewbox[2] + 'px',
-    //     "--height": viewbox[3] + 'px'
-    // })
 
     // if(!unionized) // alternate branch for wallpaper viewbox
-    if(wallpaper){
-        // for wallpaper, top and left are radius * wallx and wally.... width and height are just radius * 2...
-        viewbox = [
-            // so this is creating a [minx, miny, maxx, maxy] format from the wallpaper expanded by some scalar
-            wallx * xwindow * -2, // min x
-            wally * ywindow * -2, // min y
-            wallx * xwindow * 4,
-            wally * ywindow * 4
-        ].map(n => shorten(n * radius))
-        // so I'll drop a reference to the svg masks 
-        // TODO gonna upgrade maskgeometry to geometry once I figure turf out
-        // for full screen I'm multiplying by 10 so I can 'scale' down to 0.1 to simulate zooming.
-        // use a zoom factor as a 'scale'...
-        Object.assign(cssvars, {
-            "--top": "-500vh", // replace with width and height from form... multiple of base unit ? base unit as 10%?
-            "--left": "-500vw",
-            "--width": "1000vw",
-            "--height": "1000vh",
-        })
-    } else { // else its a window
-        // in window  mode, the section has the same size and position as the svg, like a window into svgspace
-        let [minx, miny, width, height] = bbox2topleft(sectionbbox).map(n => n * radius)
-        viewbox = [
-            minx - 1 * strapwork / 2, // farther left
-            miny - 1 * strapwork / 2, // farther up
-            width + 1 * strapwork, // wider
-            height + 1 * strapwork // taller
-        ].map(shorten) // truncate precision
-        // I used 1 * as a shorthand to ensure strapwork is a number before the addition
-        // I had to apply +/- anyhow
+    // if(wallpaper){
+    //     // for wallpaper, top and left are radius * wallx and wally.... width and height are just radius * 2...
+    //     viewbox = [
+    //         // so this is creating a [minx, miny, maxx, maxy] format from the wallpaper expanded by some scalar
+    //         wallx * xwindow * -1, // min x
+    //         wally * ywindow * -1, // min y
+    //         wallx * xwindow * 2,
+    //         wally * ywindow * 2
+    //     ].map(n => shorten(n * radius))
+    //     // so I'll drop a reference to the svg masks 
+    //     // TODO gonna upgrade maskgeometry to geometry once I figure turf out
+    //     // for full screen I'm multiplying by 10 so I can 'scale' down to 0.1 to simulate zooming.
+    //     // use a zoom factor as a 'scale'...
+    //     Object.assign(cssvars, {
+    //         "--top": "-500vh", // replace with width and height from form... multiple of base unit ? base unit as 10%?
+    //         "--left": "-500vw",
+    //         "--width": "1000vw",
+    //         "--height": "1000vh",
+    //     })
+    // } else { // else its a window
+    //     // in window  mode, the section has the same size and position as the svg, like a window into svgspace
+    //     let [minx, miny, width, height] = bbox2topleft(sectionbbox).map(n => n * radius)
+    //     viewbox = [
+    //         minx - 1 * strapwork / 2, // farther left
+    //         miny - 1 * strapwork / 2, // farther up
+    //         width + 1 * strapwork, // wider
+    //         height + 1 * strapwork // taller
+    //     ].map(shorten) // truncate precision
+    //     // I used 1 * as a shorthand to ensure strapwork is a number before the addition
+    //     // I had to apply +/- anyhow
 
-        console.log("SECTIONBOX", sectionbbox)
-        console.log("VIEWBOX", viewbox)
-        Object.assign(cssvars, {
-            "--left": viewbox[0] + 'px', // ha doesnt matter if its a square
-            "--top": viewbox[1] + 'px', // this might need to be flipped??
-            "--width": viewbox[2] + 'px',
-            "--height": viewbox[3] + 'px'
-        })
-    }
+        // console.log("SECTIONBOX", sectionbbox)
+        // console.log("VIEWBOX", viewbox)
+    //     Object.assign(cssvars, {
+    //         "--left": viewbox[0] + 'px', // ha doesnt matter if its a square
+    //         "--top": viewbox[1] + 'px', // this might need to be flipped??
+    //         "--width": viewbox[2] + 'px',
+    //         "--height": viewbox[3] + 'px'
+    //     })
+    // }
 
     let maskhash = paintmask({viewbox, radius, strapwork, atomgeometry, uniongeometry, precision, linejoin})
     
@@ -262,11 +228,11 @@ module.exports = function(params /* articleparams */, index, arrayref){
     })
 
     return {"article": {
+        "type": type,
         "style": cssvars, // mostly vars 
         "childNodes": [ // section gets psuedo elements to place float shapes in the vicinity of flowed text inside section
             {"section": {
                 "title": "article " + index, // TODO replace with params.title once it exists
-                "type": type,
                 "style": {
                     /* overwrites the parents assignement to a mask to frame the content of section */
                     "--mask": "url('" + maskurl + "#section')"

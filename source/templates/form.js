@@ -193,7 +193,7 @@ module.exports = function(paramarray, options){
                                 {"label": [
                                     "zoom", 
                                     {"input":{
-                                        "name":`--zoom-${n}`,"type":"number","min":"0.2","max": "3","step":"0.01","value": param["--zoom"]
+                                        "name":`--zoom-${n}`,"type":"number","min":"0.05","max": "3","step":"0.01","value": param["--zoom"]
                                     }}
                                 ]},
                                 // 

@@ -3,6 +3,8 @@ const {cachelattice} = require('./cachelattice.js')
 const {paintmask} = require('./paintmask')
 const {shorten} = require('./mathutils')
 
+const webcam = require('../templates/webcam.json')
+
 // The only reason I need a black rect masked to the black background into a transparent cut-out of the geometry
 // is for shape-outside views
 // so maybe, for wallpapers where I'm not going to have a shape, I can instead simply return 
@@ -263,7 +265,9 @@ module.exports = function(params /* articleparams */, index, arrayref){
                                 // render shape-outside for div.left and div.right
                             ]
                         case "embed":
-                            return [{[embedtag]: {
+                            // if embedtag is webcam... 
+                            // iframe | media (img/video) | camera
+                            return embedtag == "webcam" ? webcam : [{[embedtag]: {
                                 // autoloop and autoplay for video
                                 // "autoplay": "true",
                                 "loop": "true",

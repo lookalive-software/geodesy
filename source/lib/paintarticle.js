@@ -86,11 +86,9 @@ module.exports = function(params /* articleparams */, index, arrayref){
 
 // slice the boolmask down to however many elements you actually have -- 
 // have I 
-
-    let nestedgeometry = lattice.shells
     let flatgeometry = lattice.shells.flat()
     let maskedgeometry = (maskmode === 'nested')
-        ? nestedgeometry.filter((_, index) => boolmask[index]).flat() // returns true or false for that 'order' of the binary boolmask
+        ? lattice.shells.filter((_, index) => boolmask[index]).flat() // returns true or false for that 'order' of the binary boolmask
         : flatgeometry.filter((_, index) => boolmask[index]) 
 
     // if bitmask ended up providing no geometry, would hate to show nothing, show everything instead
@@ -105,6 +103,9 @@ module.exports = function(params /* articleparams */, index, arrayref){
     let maskpolygons = turf.featureCollection(maskedgeometry.map(
         ({pts}) => turf.polygon([pts])
     ))
+
+    // console.log("MASKPOLYGON", maskpolygons.features.map(e => e.geometry.coordinates))
+
     // could write to arrayref, basically if this element is not a wallpaper, append its bbox to a list, and take the bbox of all the bboxes so far
     // basically if(unionized) arrayref.artbox ? arrayref.artbox.push(articlebbox) : (arrayref.artbox = [])
     // the caller of paintarticle can check the artbox of the array and use that to describe the size of the body
@@ -116,29 +117,35 @@ module.exports = function(params /* articleparams */, index, arrayref){
     let articlebbox = turf.bbox(allpolygons) // returns [minx, miny, maxx, maxy] of bounding box
     let sectionbbox = turf.bbox(maskpolygons)
 
-    let artviewbox = bbox2topleft(articlebbox).map(n => n * radius)
+    console.log("TURF:BBOX", articlebbox)
 
-    let minwallpaper = lattice.meta.wallpaper
+    // 
+    // let artviewbox = bbox2topleft(articlebbox).map(n => n * radius)
+
     let [wallx, wally] = lattice.meta.wallpaper
 
-    let minradius = pythagoras(...minwallpaper)
+    // let minradius = pythagoras(wallx, wally)
+
     Object.assign(cssvars, {
-        "--artrad": pythagoras(artviewbox[0], artviewbox[1]) * 2 + 'px',
+        // artrad is a way to decide how large of a circle would circumscribe the article
+        // for ::Before menu...  
+        // "--artrad": pythagoras(artviewbox[0], artviewbox[1]) * 2 + 'px',
         // "--minrad": minradius * radius + 'px'
         "--wallx": 2 * wallx * radius, // multiply by 2 because wallpaper is just half of the box.
         "--wally": 2 * wally * radius
     }) // maybe the other one is secleft, secheight... al, at, aw, ah, sl, st, sw, sh
 
-
-    let shortestside = articlebbox.map(Math.abs).reduce((a,b) => Math.min(a,b))
+    // DELETING shortestside / basismultiple was an attempt to automatically find a good wallpaper viewbox
+    // but now I'm just letting the form choose it with xwindow/ywindow
+    // let shortestside = articlebbox.map(Math.abs).reduce((a,b) => Math.min(a,b))
     // if the bbox of the shells is less than even one of my wallpaperes, then default to one wallpaper
-    let basismultiple = Math.max(1, Math.floor(shortestside / minradius)) //  scalar int
+    // let basismultiple = Math.max(1, Math.floor(shortestside / minradius)) //  scalar int
     // could replace this with a form input to change viewbox
     // console.log("MINRAD", minradius)
     // console.log("SHORTESTSIDE", shortestside)
     // console.log("BASISMULT", basismultiple)
-    let atomgeometry = maskedgeometry.map(({pts}) => pts)
-    let uniongeometry = atomgeometry
+    let atomgeometry, uniongeometry
+        atomgeometry = uniongeometry = maskedgeometry.map(({pts}) => pts)
     // so i'll set uniongeometry equal to atomgeometry,
     // but if unionize is set, overwrite uniongeometry
     if(uniongeometry.length && unionize ){ 
@@ -165,7 +172,6 @@ module.exports = function(params /* articleparams */, index, arrayref){
             }
             // console.log(depth)
             uniongeometry = depth > 3 ? coordinates.flat() : coordinates
-
         } else {
             console.error("NO GEOMETRY???")
         }
@@ -180,6 +186,25 @@ module.exports = function(params /* articleparams */, index, arrayref){
     // filter everyone out with a larger norm than that
     // so that when painting the wallpaper, I won't catch any edges from polygons whose centers are further away from the center
     // than my furthest diagonal, viewbox[0] viewbox[1]
+
+    // viewbox = (wallpaper ? [
+    //     wallx * xwindow * -2, // min x
+    //     wally * ywindow * -2, // min y
+    //     wallx * xwindow * 4,
+    //     wally * ywindow * 4
+    // ] : [
+    //     minx - 1 * strapwork / 2, // farther left
+    //     miny - 1 * strapwork / 2, // farther up
+    //     width + 1 * strapwork, // wider
+    //     height + 1 * strapwork // taller
+    // ]).map(n => shorten(n * radius))
+
+    // Object.assign(cssvars, {
+    //     "--left":   viewbox[0] + 'px', // ha doesnt matter if its a square
+    //     "--top":    viewbox[1] + 'px', // this might need to be flipped??
+    //     "--width":  viewbox[2] + 'px',
+    //     "--height": viewbox[3] + 'px'
+    // })
 
     // if(!unionized) // alternate branch for wallpaper viewbox
     if(wallpaper){
@@ -252,6 +277,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
                     switch(type){
                         case "text":
                             return [
+                                // could simplify the markup with shape-left, shape-right, 
                                 {"div": {"style": {
                                     "float": "left",
                                     "shape-outside": "url('" + shapeurl + "#left')"

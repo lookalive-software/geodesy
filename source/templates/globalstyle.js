@@ -5,9 +5,9 @@ module.exports = {
 	        "padding": "0",
 	        "box-sizing":"border-box" // I'm actually not sure about this I might want to be able to expand the space within a section by adding a border
 	    },
-	    "body": {
-	        "overflow":"hidden",
-	        "height": "100%"
-	    }
+	    // "body": {
+	    //     // "overflow":"hidden",
+	    //     "height": "100%"
+	    // }
 	}
 }

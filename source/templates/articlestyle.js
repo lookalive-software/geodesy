@@ -9,6 +9,15 @@ module.exports = { "style": {
         // "src": `url('https://fonts.googleapis.com/css2?family=Recursive:slnt,wght,CASL,CRSV,MONO@-15..0,300..1000,0..1,0..1,0..1&display=swap')`,
         "font-weight": "300 1000"
     },
+    "html": {
+    	// for body min height to be able to fill without content specified, html needs to be 100
+    	"height": "100%"
+    },
+	"body": {
+		"position": "relative",
+		"min-height": "100%"
+		// gets exact dimensions with inline paintarticle
+    },
 	"article, article:before, section, article:after": {
 		"position": "absolute"
 	},
@@ -53,20 +62,22 @@ module.exports = { "style": {
 		"filter": "blur(calc(var(--blur) * 1px))",
 		// "opacity": "var(--opacity)",
 		// "transform": "scale(var(--zoom))",
-		"transform": "rotate(calc(1deg * var(--spin)))"
 	},
 	"article[type=\"net\"]": {
 		// there's a smaller width/height if it helps rendering,
 		// maybe its the diagonal of the max(vh, vh) square that would let it rotate
-		"left": "-100%",
-		"top": "-100%",
+		"left": "0%",
+		"top": "0%",
 		// left 50% for every extra 100%
-		"width": "300%",
-		"height": "300%"
+		"width": "100%",
+		"height": "100%",
+		// wallpaper has to be position relative so it fills the body
+		"overflow": "hidden",
+		// "position": "relative"
 	},
 	"section": {
 		"text-align":"var(--align)", // left | center | right | justify
-		"overflow": "hidden" // fixed an issue with iframe showing through maskk
+		"overflow": "hidden", // fixed an issue with iframe showing through maskk
 	},
 	"section > span": {
 		"font-family": "recursive",
@@ -88,6 +99,7 @@ module.exports = { "style": {
 		"left": "0px" // without this I was getting pushed to the middle of the parent, not sure why
 	},
 	"section, article:after": {
+		"transform": "rotate(calc(1deg * var(--spin)))",
 		// there's a bleed over on
 		// well multiply one piel by the scale
 		"width": "calc(var(--width) * var(--zoom))",
@@ -115,10 +127,11 @@ module.exports = { "style": {
 	// remember mask-size can be used with zoom
 
 	"[type=\"net\"] section, [type=\"net\"]:after":{
-		"width": "100%",
-		"height": "100%",
-		"left": "0",
-		"top": "0",
+		// wallpaper gets oversized to fill out its parent article while allowing its overflow to be hidden
+		"width": "300%",
+		"height": "300%",
+		"left": "-100%",
+		"top": "-100%",
 		// any movement of the wallpaper should be applied to:
 
 		"mask-position": "calc(50% + var(--width) * var(--xcent)) calc(50% + var(--height) * var(--ycent))",

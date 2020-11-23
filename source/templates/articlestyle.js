@@ -4,9 +4,7 @@ module.exports = { "style": {
 	// so that the positioning of sections and sectionafters can be done relative to center of the screen
     "@font-face": {
         "font-family": "recursive",
-        /* attempt to use localy hosted woff file but fallback to google font API*/
         "src": `url('/font/recursive.woff2') format('woff2-variations')`,
-        // "src": `url('https://fonts.googleapis.com/css2?family=Recursive:slnt,wght,CASL,CRSV,MONO@-15..0,300..1000,0..1,0..1,0..1&display=swap')`,
         "font-weight": "300 1000"
     },
     "html": {
@@ -15,79 +13,36 @@ module.exports = { "style": {
     },
 	"body": {
 		"position": "relative",
-		"min-height": "100%"
-		// gets exact dimensions with inline paintarticle
-    },
-	"article, article:before, section, article:after": {
-		"position": "absolute"
-	},
-	"article:before, article:after": {
-		"content": '""',
-		"pointer-events": "none"
-	},
-	"section > div": {
-		"width": "50%",
-		"height": "100%",
-		"shape-margin": "calc(var(--margin) * 100%)",
-	},
-	"[type=\"embed\"] section": {
-		"pointer-events": "none",
-	},
-	// iframe should only exist in embed mode, no?
-	// last-child in embed mode is going to be a video, 
-	// "[mode=\"embed\"] iframe, [mode=\"embed\"] img, [mode=\"embed\"] video": {
-	"[type=\"embed\"] section > *": {
-		"pointer-events": "all",
-		// "frameborder": "0",
-		"opacity": "var(--fillopacity)",
-		"min-width": "100%", // min width & height to allow img to scale without distortion
+		// gets exact dimensions with inline paintarticle, but falls to 100% at minimum
 		"min-height": "100%",
-		"transform": "scale(var(--ifscale))",
-		"position": "absolute",
-		"right": "calc(var(--ifxoffset) * var(--ifscale) * -1%)", // + to go left to right
-		"top":  "calc(var(--ifyoffset) * var(--ifscale) * -1%)", // - to go bottom to top
-		"z-index": "-1"
-	},
-	// section[type="net|text|embed"]
-	// body will have to have absolute size now for articles to be positioned correctly
-
+		"min-width": "100%"
+    },
+    // position article at 0,0 center of body, offset by combination of step/cent/unitcell/zoom
 	"article": {
-		// "width": "0",
-		// "height": "0",
-		"overflow":"visible", // default ?
-		// this x / y offset needs to be multiplied by art... 
+		"position": "absolute",
 		"left": "calc(50% + 1px * calc(calc(var(--xstep) + var(--xcent)) * var(--wallx) * var(--zoom)))", // + to go left to right
 		"top":  "calc(50% - 1px * calc(calc(var(--ystep) + var(--ycent)) * var(--wally) * var(--zoom)))", // - to go bottom to top
-		// "top": "50vh",
 		"filter": "blur(calc(var(--blur) * 1px))",
-		// "opacity": "var(--opacity)",
-		// "transform": "scale(var(--zoom))",
 	},
-	"article[type=\"net\"]": {
-		// there's a smaller width/height if it helps rendering,
-		// maybe its the diagonal of the max(vh, vh) square that would let it rotate
-		"left": "0%",
-		"top": "0%",
-		// left 50% for every extra 100%
-		"width": "100%",
-		"height": "100%",
-		// wallpaper has to be position relative so it fills the body
-		"overflow": "hidden",
-		// "position": "relative"
+	// offset the medallion so its center lies on the articles origin 
+	// this gets overwritten for NET articles
+	"section, article:after": {
+		"position": "absolute",
+		"top": "var(--top)",
+		"left": "var(--left)",
+		"width": "var(--width)",
+		"height": "var(--height)",
+
+		"transform": "scale(var(--zoom)) rotate(calc(1deg * var(--spin)))",
+
+		"mask-image": "var(--mask)",
+		"mask-position": "center",
+		// for chrome:
+	    "-webkit-mask-image": "var(--mask)",
+	    "-webkit-mask-position": "center",
 	},
-	"section": {
-		"text-align":"var(--align)", // left | center | right | justify
-		"overflow": "hidden", // fixed an issue with iframe showing through maskk
-	},
-	"section > span": {
-		"font-family": "recursive",
-		"white-space": "pre-wrap",
-		"line-height": "var(--hght)",
-		"font-size": "calc(5px * var(--fontsize))",
-		"color": "var(--fontcolor)",
-		"opacity": "var(--fontopacity)",
-		"font-variation-settings": `"MONO" var(--MONO), "CASL" var(--CASL), "wght" var(--wght), "slnt" var(--slnt), "CRSV" 0.5`,
-	},
+
+	// to paint the background of sections
 	"section:before": {
 		"background": "var(--fillcolor)",
 		"opacity": "var(--fillopacity)",
@@ -98,56 +53,72 @@ module.exports = { "style": {
 		"z-index": "-1", // then needs to be dropped under the text since absolute pos created new stacking order
 		"left": "0px" // without this I was getting pushed to the middle of the parent, not sure why
 	},
-	"section, article:after": {
-		"transform": "rotate(calc(1deg * var(--spin)))",
-		// there's a bleed over on
-		// well multiply one piel by the scale
-		"width": "calc(var(--width) * var(--zoom))",
-		"height": "calc(var(--height) * var(--zoom) )", // add zoom here!
-		// this is relative to the article, which is centered
-		// maybe it makes more sense for these to be 100%
-		// and the article be scaled and positioned?
-		"top": "calc(var(--top) * var(--zoom))",
-		"left": "calc(var(--left) * var(--zoom))",
-		"mask-image": "var(--mask)",
-	    "-webkit-mask-image": "var(--mask)",
-	    // instead of center
-	    // we'll do calc(50% + --x/ycent)
-	    // steps don't do anything for wallpaper
-	    // for medallions, this will always be center
-	    // xycent and step are applied to the article.
-	    "-webkit-mask-position": "center",
-		"mask-position": "center",
-
-		"mask-size": "calc(var(--width) * var(--zoom))",
-		"-webkit-mask-size": "calc(var(--width) * var(--zoom))",
-		"display":"block" // to get floated widths correct
+	// to paint the strap work
+	"article:after": {
+		"content": '""',
+		"pointer-events": "none",
+		"background": "var(--strokecolor)",
+		"opacity": "var(--strokeopacity)",
 	},
-	// more specific, cascading override for net articles -- just fill the screen
-	// remember mask-size can be used with zoom
 
+	// for NET (wallpaper) articles, fill the screen
+	"article[type=\"net\"]": {
+		"left": "0",
+		"top": "0",
+		"width": "100%",
+		"height": "100%",
+		"overflow": "hidden",
+	},
 	"[type=\"net\"] section, [type=\"net\"]:after":{
+		"transform": "rotate(calc(1deg * var(--spin)))",
 		// wallpaper gets oversized to fill out its parent article while allowing its overflow to be hidden
+		// maybe this should me a multiple of max(vh,vw) so it doesnt break on extreme aspect ratio
 		"width": "300%",
 		"height": "300%",
 		"left": "-100%",
 		"top": "-100%",
 		// any movement of the wallpaper should be applied to:
+		"mask-size": "calc(var(--width) * var(--zoom))",
+		"mask-position": "calc(50% + var(--width) * var(--xcent) * var(--zoom)) calc(50% + var(--height) * var(--ycent) * var(--zoom))",
+		// for chrome:
+		"-webkit-mask-size": "calc(var(--width) * var(--zoom))",
+		"-webkit-mask-position": "calc(50% + var(--width) * var(--xcent) * var(--zoom)) calc(50% + var(--height) * var(--ycent) * var(--zoom))",
+	},
 
-		"mask-position": "calc(50% + var(--width) * var(--xcent)) calc(50% + var(--height) * var(--ycent))",
-		"-webkit-mask-position": "calc(50% + var(--width) * var(--xcent)) calc(50% + var(--height) * var(--ycent))"
+	// for TEXT articles
+	"article[type=\"text\"] section": {
+		"text-align":"var(--align)", // left | center | right | justify
+		"overflow": "hidden", // fixed an issue with iframe showing through maskk
 	},
-	"article:after": {
-		"background": "var(--strokecolor)",
-		"opacity": "var(--strokeopacity)",
-		"content": `""`
+	"[type=\"text\"] section > div": {
+		// aka shapeleft / shaperight
+		"width": "50%",
+		"height": "100%",
+		"shape-margin": "calc(var(--margin) * 100%)",
 	},
-	// "section:before":{
-		// "float":"left"
-		// shape-outside hash#shapeleft
-	// },
-	// "section::after":{
-	// 	"float":" right"
-	// 	// shape-outside: url(var(--shaperight))
-	// }
+	"article[type=\"text\"] section span": {
+		"font-family": "recursive",
+		"white-space": "pre-wrap",
+		"line-height": "var(--hght)",
+		"font-size": "calc(5px * var(--fontsize))",
+		"color": "var(--fontcolor)",
+		"opacity": "var(--fontopacity)",
+		"font-variation-settings": `"MONO" var(--MONO), "CASL" var(--CASL), "wght" var(--wght), "slnt" var(--slnt), "CRSV" 0.5`,
+	},
+
+	// for EMBED articles
+	"[type=\"embed\"] section": {
+		"pointer-events": "none",
+	},
+	"[type=\"embed\"] section > *": {
+		"pointer-events": "all",
+		"opacity": "var(--fillopacity)",
+		"min-width": "100%", // min width & height to allow img to scale without distortion
+		"min-height": "100%",
+		"transform": "scale(var(--ifscale))",
+		"position": "absolute",
+		"right": "calc(var(--ifxoffset) * var(--ifscale) * -1%)", // + to go left to right
+		"top":  "calc(var(--ifyoffset) * var(--ifscale) * -1%)", // - to go bottom to top
+		"z-index": "-1"
+	},
 }}

@@ -20,8 +20,26 @@ module.exports = { "style": {
     // position article at 0,0 center of body, offset by combination of step/cent/unitcell/zoom
 	"article": {
 		"position": "absolute",
-		"left": "calc(50% + 1px * calc(calc(var(--xstep) + var(--xcent)) * var(--wallx) * var(--zoom)))", // + to go left to right
-		"top":  "calc(50% - 1px * calc(calc(var(--ystep) + var(--ycent)) * var(--wally) * var(--zoom)))", // - to go bottom to top
+		"left": `calc(
+			50%
+		  + 1px
+		  * calc(
+		  	  var(--xstep)
+		  	+ var(--xcent)
+		  	)
+	  	  * var(--wallx)
+	  	  * var(--zoom)
+  	  	)`, // + to go left to right
+		"top":  `calc(
+			50%
+		  - 1px
+		  * calc(
+  			  var(--ystep)
+  			+ var(--ycent)
+  			)
+		  * var(--wally)
+		  * var(--zoom)
+		)`, // - to go bottom to top
 		"filter": "blur(calc(var(--blur) * 1px))",
 	},
 	// offset the medallion so its center lies on the articles origin 
@@ -32,9 +50,10 @@ module.exports = { "style": {
 		"left": "var(--left)",
 		"width": "var(--width)",
 		"height": "var(--height)",
-
-		"transform": "scale(var(--zoom)) rotate(calc(1deg * var(--spin)))",
-
+		"transform": `
+			scale(var(--zoom))
+			rotate(calc(1deg * var(--spin)))
+		`,
 		"mask-image": "var(--mask)",
 		"mask-position": "center",
 		// for chrome:

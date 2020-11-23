@@ -13,24 +13,19 @@ function pythagoras(a,b){ return Math.sqrt(a * a + b * b)}
 function bbox2topleft([x1, y1, x2, y2]){ return [x1, y1, x2 - x1, y2 - y1]} /* minx/miny/width/height */
 // bbox is minx miny maxx maxy
 // viewbox is minx miny width height
+// I need a function that takes cssvars and turns it back into a pixel bounding box
+// top: top / left: left / bottom: top - height / right: left + width
+// but then top is relative to:
+// (ystep + ycent) * wally * zoom
+// and left is relative to:
+// (xstep + xcent) * wallx * zoom
 
-/**
- * All the geometry has to happen on a -90 to 90 range, so we start with unit = 1
- * bboxes and geometry at this point is unit 1
- * Once you're a viewbox/css, you should be multiplied by radius -- try to make this happen the same in all places
- * Are all sizes derived from a viewbox, such that if bbox2topleft does the transformation, I'll have the same funciton applied everywhere?
- * SVG units are always px ?
- */
+// once I have the left/top position of each art, I apply their width and height to get bottom/left
+// then I can use Math.max(...) to find the largest horizontal position, and largest veritcal position
+// double those and use for width and height: this keeps 50% 50% as my origin to position relatively to
 
-
- /**
-    switch mode
-        text or embed
-        unionize & window
-        wallpaper:
-            atomize & wallpaper
-
- */
+// so for each
+// let left = 
 
 module.exports = function(params /* articleparams */, index, arrayref){
     // bump shells up to the minumum needed to fill min wallpaper
@@ -164,55 +159,6 @@ module.exports = function(params /* articleparams */, index, arrayref){
         "--width":  viewbox[2] + 'px',
         "--height": viewbox[3] + 'px'
     })
-    // at the end I can iterate through the article[] and determine by bbox
-    // get the largest |x| value and * 2 use that for width of body
-    // get the largest |y| value and *2 use that for height of body
-    // since all the dimensions are relative to a an origin, and x and y are extended equally positive and negative
-    // I believe I'll be able to keep articles' default position 50% 50% + modifiers
-    // 
-
-
-    // if(!unionized) // alternate branch for wallpaper viewbox
-    // if(wallpaper){
-    //     // for wallpaper, top and left are radius * wallx and wally.... width and height are just radius * 2...
-    //     viewbox = [
-    //         // so this is creating a [minx, miny, maxx, maxy] format from the wallpaper expanded by some scalar
-    //         wallx * xwindow * -1, // min x
-    //         wally * ywindow * -1, // min y
-    //         wallx * xwindow * 2,
-    //         wally * ywindow * 2
-    //     ].map(n => shorten(n * radius))
-    //     // so I'll drop a reference to the svg masks 
-    //     // TODO gonna upgrade maskgeometry to geometry once I figure turf out
-    //     // for full screen I'm multiplying by 10 so I can 'scale' down to 0.1 to simulate zooming.
-    //     // use a zoom factor as a 'scale'...
-    //     Object.assign(cssvars, {
-    //         "--top": "-500vh", // replace with width and height from form... multiple of base unit ? base unit as 10%?
-    //         "--left": "-500vw",
-    //         "--width": "1000vw",
-    //         "--height": "1000vh",
-    //     })
-    // } else { // else its a window
-    //     // in window  mode, the section has the same size and position as the svg, like a window into svgspace
-    //     let [minx, miny, width, height] = bbox2topleft(sectionbbox).map(n => n * radius)
-    //     viewbox = [
-    //         minx - 1 * strapwork / 2, // farther left
-    //         miny - 1 * strapwork / 2, // farther up
-    //         width + 1 * strapwork, // wider
-    //         height + 1 * strapwork // taller
-    //     ].map(shorten) // truncate precision
-    //     // I used 1 * as a shorthand to ensure strapwork is a number before the addition
-    //     // I had to apply +/- anyhow
-
-        // console.log("SECTIONBOX", sectionbbox)
-        // console.log("VIEWBOX", viewbox)
-    //     Object.assign(cssvars, {
-    //         "--left": viewbox[0] + 'px', // ha doesnt matter if its a square
-    //         "--top": viewbox[1] + 'px', // this might need to be flipped??
-    //         "--width": viewbox[2] + 'px',
-    //         "--height": viewbox[3] + 'px'
-    //     })
-    // }
 
     let maskhash = paintmask({viewbox, radius, strapwork, atomgeometry, uniongeometry, precision, linejoin})
     

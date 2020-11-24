@@ -128,8 +128,8 @@ module.exports = {
         "input[type=\"range\"]": {
             "width": "100%",
             "position": "relative",
+            "min-width": "0", // had to add this because all of a sudden my ranges were overflowing from my fieldsets, firefox only behavoir
             "z-index": "1" // for overlapping with color input
-            // "text-align":"center"
         },
         "input[type=\"color\"]": {
             "width": "100%",

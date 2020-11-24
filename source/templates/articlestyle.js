@@ -18,47 +18,48 @@ module.exports = { "style": {
 		"min-width": "100%"
     },
     // position article at 0,0 center of body, offset by combination of step/cent/unitcell/zoom
+    // position of section is always relative to 0,0 before scaling and rotation
+    // 
 	"article": {
 		"position": "absolute",
-		"left": `calc(
-			50%
-		  + 1px
-		  * calc(
-		  	  var(--xstep)
-		  	+ var(--xcent)
-		  	)
-	  	  * var(--wallx)
-	  	  * var(--zoom)
-  	  	)`, // + to go left to right
-		"top":  `calc(
-			50%
-		  - 1px
-		  * calc(
-  			  var(--ystep)
-  			+ var(--ycent)
-  			)
-		  * var(--wally)
-		  * var(--zoom)
-		)`, // - to go bottom to top
+		"left": "50%",
+		"top": "50%",
 		"filter": "blur(calc(var(--blur) * 1px))",
 	},
 	// offset the medallion so its center lies on the articles origin 
 	// this gets overwritten for NET articles
 	"section, article:after": {
 		"position": "absolute",
-		"top": "var(--top)",
-		"left": "var(--left)",
+		"top": `calc(
+			var(--top)
+		  - 1px
+	  	  * var(--yunit)
+		  * calc(
+		  	  var(--ystep)
+		  	+ var(--ycent)
+		  	)
+	  	)`,
+		"left": `calc(
+			var(--left)
+		  + 1px
+  	  	  * var(--xunit)
+		  * calc(
+		  	  var(--xstep)
+		  	+ var(--xcent)
+  	  		)
+	  	)`,
 		"width": "var(--width)",
 		"height": "var(--height)",
-		"transform": `
-			scale(var(--zoom))
-			rotate(calc(1deg * var(--spin)))
-		`,
+
 		"mask-image": "var(--mask)",
 		"mask-position": "center",
 		// for chrome:
 	    "-webkit-mask-image": "var(--mask)",
 	    "-webkit-mask-position": "center",
+		"transform": `
+			scale(var(--zoom))
+			rotate(calc(1deg * var(--spin)))
+		`
 	},
 
 	// to paint the background of sections
@@ -87,6 +88,9 @@ module.exports = { "style": {
 		"width": "100%",
 		"height": "100%",
 		"overflow": "hidden",
+		// disable zoom and rotate transforms to the article
+		// zoom is applied to the mask and rotation is applied to the net:section so that I can rotate the inner body
+		"transform": "none"
 	},
 	"[type=\"net\"] section, [type=\"net\"]:after":{
 		"transform": "rotate(calc(1deg * var(--spin)))",

@@ -16,9 +16,9 @@ function bbox2topleft([x1, y1, x2, y2]){ return [x1, y1, x2 - x1, y2 - y1]} /* m
 // I need a function that takes cssvars and turns it back into a pixel bounding box
 // top: top / left: left / bottom: top - height / right: left + width
 // but then top is relative to:
-// (ystep + ycent) * wally * zoom
+// (ystep + ycent) * yunit * zoom
 // and left is relative to:
-// (xstep + xcent) * wallx * zoom
+// (xstep + xcent) * xunit * zoom
 
 // once I have the left/top position of each art, I apply their width and height to get bottom/left
 // then I can use Math.max(...) to find the largest horizontal position, and largest veritcal position
@@ -93,11 +93,11 @@ module.exports = function(params /* articleparams */, index, arrayref){
     let articlebbox = turf.bbox(allpolygons) // returns [minx, miny, maxx, maxy] of bounding box
     let sectionbbox = turf.bbox(maskpolygons)
 
-    let [wallx, wally] = lattice.meta.wallpaper
+    let [xunit, yunit] = lattice.meta.wallpaper
 
     Object.assign(cssvars, {
-        "--wallx": 2 * wallx * radius, // multiply by 2 because wallpaper is just half of the box.
-        "--wally": 2 * wally * radius
+        "--xunit": 2 * xunit * radius, // multiply by 2 because wallpaper is just half of the box.
+        "--yunit": 2 * yunit * radius
     }) // maybe the other one is secleft, secheight... al, at, aw, ah, sl, st, sw, sh
 
     let atomgeometry, uniongeometry
@@ -134,15 +134,15 @@ module.exports = function(params /* articleparams */, index, arrayref){
         }
     } // else its atomized, no change needed to geometry
     
-    // wallx/y is minimum wallpaper size, whose value is one quadrant of a four quadrant euclidian plane
+    // xunit/y is minimum wallpaper size, whose value is one quadrant of a four quadrant euclidian plane
     // so I have to multiple by 2 to 
     // x/ywindow is the number of steps to multiply by to increase the unitcell
     let [minx, miny, width, height] = bbox2topleft(sectionbbox)
     let viewbox = (wallpaper ? [
-        wallx * xwindow * -1, // min x
-        wally * ywindow * -1, // min y
-        wallx * xwindow * 2,
-        wally * ywindow * 2
+        xunit * xwindow * -1, // min x
+        yunit * ywindow * -1, // min y
+        xunit * xwindow * 2,
+        yunit * ywindow * 2
     ] : [
         minx - 1 * strapwork / 2, // farther left
         miny - 1 * strapwork / 2, // farther up

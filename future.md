@@ -1,3 +1,8 @@
+How to do push history? Need a function that scans over the whole form and assembles a query string.
+grab all inputs, name + value right? figure out which radio is checked, if a checkbox is checked...
+
+
+
 0.6.0
 In focus mode, the rest of the fieldsetes are hidden until you choose a focused article
 The bottom half of the menu (the singular menu) has a title-header, a duplicate and delete button
@@ -66,4 +71,34 @@ Like Hunderwasser said, to start molding the architecture
 // A very pure or whispery / hf voice occupies little of the harmonic axis. bias towards lower voice.
 // Basically a measure of richness vs 'thinness', thin font weight for averaged fourier samples with small std dev
 
-// 
+// another cachelattice setup -- write the urls to request a geometry+volatiles
+// and I calculate geometry on the fly
+// but if a geo-vol is requested 3,4,5 times -- write it to compressed svg to offload repeat computations
+// gotta find a balance between having an answer ready to go and storing 10s of thousands of svgs
+
+
+# all it takes to implement the name-addressing:
+Take a querystring or a POST body:
+	assign the resolved paramarray to the keyname
+
+	for now, keyname is always everything-after-the-[form|art]-header
+	Eventually I'll remove the form/art distinction and embed the 
+	Basically maybe the form has a ""
+	Maybe there is an option to keep history in the URL so the back button works -- tradeoff to storing only a single state to the key on server side. whether its form/art/null is immaterial -- first, I take the querystring or resolve the address to the memquery, if there is no parameters (via query OR postbody), then just retrieve the parameters and serve the form or the art or the null (204 successful)
+
+	If there are parameters, I validate the form then store at memquery[webaddress]
+	{option, params}
+	Else, lookup memquery[webaddress] (even if webaddress is an empty string thats fine) --
+		Then return what is requested, null if no request is necessary (AJAX update), form to generate form, art to paint articles
+
+	At first, send the whole URL every time I need to update -- later I can send update-fragments to lower bandwidth
+
+	-- this will allow for partial key-value updates: /any/webaddress?anykey=newvalue -- basically, the api for modifying a serverside state
+
+querycache -- give a short url to a long query string
+
+# identity / auth
+Maybe I can build on keybase so you add people's public keys to a server if they're allowed to edit -- usual ownership policies, 777
+
+This could allow storing binaries in a row in sqlite without forgoing ownership rules at least when you spin up the server -- if you want to compress and encrypt it and then host it in the database that's fine, it will have to buffer the file out to the file-system (basically indexes the bytes with a filename in the directory tables) -- for fast readout to client, each file stored compressed and streamed.
+

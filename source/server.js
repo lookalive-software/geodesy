@@ -127,9 +127,6 @@ http.createServer((req, res) => {
             ]))
         break
         default:
-            // I might assume that all my svgs are one of a kind, no path name is ever re-used
-            // Same with my font files...
-            // so maybe start with 
             res.writeHead(200, {
                 'Content-Type': mimetypes[ext] || "text/plain",
                 'Content-Encoding': ext == ".svg" ? "gzip" : "identity",
@@ -138,7 +135,7 @@ http.createServer((req, res) => {
             })
             fs.createReadStream('.' + pathname) // maybe .. ?
             .on('error', err => res.end('404'))
-            .pipe(res) // compress it here if you want
+            .pipe(res)
     }
 
 }).listen(3031).on('listening', function(){console.log("Is listening on 3031")})

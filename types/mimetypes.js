@@ -28,6 +28,7 @@ module.exports = {
     ".webm": "video/webm",
     ".mp4": "video/mp4",
     ".avi": "video/avi",
+    ".js": "text/javascript",
     ".json": "application/json",
     ".stl": "application/geometry",
     ".fbx": "application/geometry",

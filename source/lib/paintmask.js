@@ -262,11 +262,8 @@ exports.paintmask = ({viewbox, uniongeometry, atomgeometry, strapwork, radius, p
     // so calc the width, draw the shape...
     // then draw the shapes again but shifted to the left by the width / 2
 
-    fs.writeFileSync('./hash/'+queryhash+'mask.svg', elementary(mask))
-    // fs.writeFileSync('./hash/'+queryhash+'mask.svg', zlib.gzipSync(elementary(mask)))
-    fs.writeFileSync('./hash/'+queryhash+'shape.svg', elementary(shape))
-    // fs.writeFileSync('./hash/'+queryhash+'.svg', elementary(svg))
-    // cache is now updated
+    fs.writeFileSync('./hash/'+queryhash+'mask.svg', zlib.gzipSync(elementary(mask)))
+    fs.writeFileSync('./hash/'+queryhash+'shape.svg', zlib.gzipSync(elementary(shape)))
     // 
     // could also do this async, sync open then stream write (so it exists by the time the client request it, even if the end of the file doesn't exist yet)
     // return '/hash/'+queryhash+'mask.svg' // return name of file to fetch

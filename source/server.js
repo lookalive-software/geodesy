@@ -127,10 +127,18 @@ http.createServer((req, res) => {
             ]))
         break
         default:
-                res.writeHead(200, {'Content-Type': mimetypes[ext] || "text/plain" })
-                fs.createReadStream('.' + pathname) // maybe .. ?
-                .on('error', err => res.end('404'))
-                .pipe(res) // compress it here if you want
+            // I might assume that all my svgs are one of a kind, no path name is ever re-used
+            // Same with my font files...
+            // so maybe start with 
+            res.writeHead(200, {
+                'Content-Type': mimetypes[ext] || "text/plain",
+                'Content-Encoding': ext == ".svg" ? "gzip" : "identity",
+                'Cache-Control': 'max-age=31536000' // here's the file never talk to me again 
+                // maybe to deal with uploads store them at their own hash so that I never have to 'check if a file has changed' or invalidate my cache
+            })
+            fs.createReadStream('.' + pathname) // maybe .. ?
+            .on('error', err => res.end('404'))
+            .pipe(res) // compress it here if you want
     }
 
 }).listen(3031).on('listening', function(){console.log("Is listening on 3031")})

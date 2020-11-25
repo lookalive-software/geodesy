@@ -1,8 +1,6 @@
 How to do push history? Need a function that scans over the whole form and assembles a query string.
 grab all inputs, name + value right? figure out which radio is checked, if a checkbox is checked...
 
-
-
 0.6.0
 In focus mode, the rest of the fieldsetes are hidden until you choose a focused article
 The bottom half of the menu (the singular menu) has a title-header, a duplicate and delete button
@@ -102,3 +100,11 @@ Maybe I can build on keybase so you add people's public keys to a server if they
 
 This could allow storing binaries in a row in sqlite without forgoing ownership rules at least when you spin up the server -- if you want to compress and encrypt it and then host it in the database that's fine, it will have to buffer the file out to the file-system (basically indexes the bytes with a filename in the directory tables) -- for fast readout to client, each file stored compressed and streamed.
 
+
+Draw a new surface on the grid in increased space, catch the link changes -- and express branches of browsing in space like a tree.
+
+
+
+Split a video, arrange the scenes along different paths in space -- wrap around timeline, infinite timeline horizontal or verticle, arbitrary commentary information that you can delete 
+
+Eventually implement music scoring -- each plane (or sphere) is a slice of time, and so doing trace the path 

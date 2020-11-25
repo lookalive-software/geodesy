@@ -1,8 +1,8 @@
 module.exports = function(paramarray, options){
-    // console.log("FORM", paaramarray)
+    console.log("FORM", {paramarray, options})
     return {"form": {
         "target": "frame",
-        "action": "paramarray",
+        "action": "./paramarray", // current space name 
         "focus": options.focus, // 0 by default, may be null in 'defocus' mode !
         "mode": options.mode, // | paint | move -- this is a global setting that controls what click/drag tools are available in the iframe
         // focus turns each article into a button that changes which  
@@ -14,9 +14,21 @@ module.exports = function(paramarray, options){
             {"input": {
                 "name":"mode", "type":"hidden", "value": options.mode // paint | move
             }},
-            // one 'focus' button
             {"menu": [
-                {"noscript": [{"input": {"type":"submit", "value": "update"}}]}, // noscript fallback to manually submit the form
+                {"fieldset": [
+                    {"input": {
+                        "type": "text",
+                        "placeholder": "web address",
+                        "name": "web",
+                        "value": options.web
+                        // if this is empty string, no worries just use root, you can store one URL at "",
+                        // if you want to make a new one 
+                        // storing the URL at this address maybe gives me space to sync up 
+                        // this is actually "room name" for my websocket form-sync
+                        // so each of us can change different parameters and stay sync'd up
+                        // if we have last-best-hash that is! Or reject you for being slow to the draw, slow connections for 5 sec.
+                    }}
+                ]},
                 {"input": {
                     "type":"submit",
                     // if I'm already defocused don't submit with this name...
@@ -48,12 +60,16 @@ module.exports = function(paramarray, options){
                             {"label": {
                                 "for": index, 
                                 "childNodes": [
-                                    "article " + index
+                                    param.art || "article " + index
                                 ]
                             }}
                         ]}
                     ))
-                ]},
+                ]}
+            ]},
+            // one 'focus' button
+            {"menu": [
+                {"noscript": [{"input": {"type":"submit", "value": "update"}}]}, // noscript fallback to manually submit the form
                 {"fieldset": [{"section": [
                     {"input": {
                         "type":"submit",
@@ -467,7 +483,7 @@ module.exports = function(paramarray, options){
                             ]
                         }}
                     ]}}
-                ))
+                )),
             ]}
         ]
     }}

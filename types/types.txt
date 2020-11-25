@@ -52,3 +52,10 @@ Types:
 	viewbox -> csspixel[4]
 
 
+Changes made from current default param
+I'm adding 
+
+this will warn me if I change a name on one side without warning me on the other -- it's basically writing a bunch of implied tests to say that arguments match expectations and the result matches expectations, otherwise unwind and halt.
+
+Pause execution and ask for a replacement value
+

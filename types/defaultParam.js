@@ -2,6 +2,7 @@ module.exports = Object.freeze({
     // my actual fallback, well this is like the old idea of a home config file
     // but sure I'll accept a type-checked JSON file 
         // fieldset for=paint
+        "art": "", // blank title will render as article + index
         "motif": "square", // || square, pyritohedron, p4octagon, doublesquares
         "shells": 10, // || 1 50 1
         "strapwork": 5, // 0 50 1
@@ -34,7 +35,7 @@ module.exports = Object.freeze({
             // line height ? 0em to 4em?
         "--fontsize": 10, // 1 < 1x < 25
         "--margin": 0.1, // 0 < 0.05x < 0.5
-        "--align": "justify", // justify | left | center | right // TEXT-ALGIN
+        "--align": "center", // justify | left | center | right // TEXT-ALGIN
         "--hght": 1, // 0.5 < 0.1x < 3 // LINE HEIGHT 
         "--MONO": 0, // 0 < 0.05x < 1 -- 0 is sans, 1 is monospace
         "--CASL": 0.5, //  0 < 0.05x < 1 -- 0 is times roman 1 is comic sans

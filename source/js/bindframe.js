@@ -29,9 +29,12 @@ form.addEventListener('submit', event => {
         // 
         case "defocus":
             event.preventDefault()
+            // figure out which radio is now checked
             let newfocus = document.querySelector('[type="radio"][name="focus"]:checked').value
-            form.setAttribute("focus", newfocus)
-            hiddenfocus.setAttribute("value", newfocus)
+            form.setAttribute("focus", newfocus) // 
+            hiddenfocus.setAttribute("value", newfocus) // sets the value on the hidden form that gets submitted
+            // actually why do I have a hiddenfocus? If the server builds the radiobuttons and checks one, isn't that my focus that gets submitted?
+            // 
             document.querySelectorAll('div[focused]')
                     .forEach((div, index) => div.setAttribute("focused", newfocus == index)) // true or false
             return false // to ignore form submission 
@@ -72,9 +75,22 @@ document.querySelectorAll('input, select, textarea').forEach(input => {
                 }
                 // set text
             break
+            case 'web':
+                // update the URL, send a POST query to the new address
+                // all it takes to fork is to change the name -- could provide a little semver form so that you can do version bumps -- before you change something, change the name, you can always navigate back to the canonical name if you like the changes
+            break
+            case 'art':
+                // Ok, an article was renamed.
+                // dig into the frame to setattribute to the title
+                // and grab the nth radio button off the focus form and update its innertext
+                // the numerical number is used to actually sort the layers
+                // the art name is just cosmetic for the form, and used as the title in html
+                
             case 'focus':
+                // when you click a radio button, name is focus -- gonna submit the form
+                // submit will be caught
                 console.log("clicking the defocus button!")
-                setTimeout(defocus.click()) // should submit the form
+                setTimeout(defocus.click()) // should submit the form // if the focus changes, click defocus?
             break
             default: 
                 clearInterval(lasttimeout) // cancel timeout that would have set class to active

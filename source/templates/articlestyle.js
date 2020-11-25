@@ -102,12 +102,31 @@ module.exports = { "style": {
 		"top": "-100%",
 		// any movement of the wallpaper should be applied to:
 		"mask-size": "calc(var(--width) * var(--zoom))",
-		"mask-position": "calc(50% + var(--width) * var(--xcent) * var(--zoom)) calc(50% + var(--height) * var(--ycent) * var(--zoom))",
+		"mask-position": `calc(
+			50%
+		  + var(--width)
+		  * var(--xcent)
+		  * var(--zoom)
+	  	) calc(
+	  		50%
+	  		+ var(--height)
+	  		* var(--ycent)
+	  		* var(--zoom)
+  		)`,
 		// for chrome:
 		"-webkit-mask-size": "calc(var(--width) * var(--zoom))",
-		"-webkit-mask-position": "calc(50% + var(--width) * var(--xcent) * var(--zoom)) calc(50% + var(--height) * var(--ycent) * var(--zoom))",
+		"-webkit-mask-position": `calc(
+			50%
+		  + var(--width)
+		  * var(--xcent)
+		  * var(--zoom)
+	  	) calc(
+	  		50%
+	  		+ var(--height)
+	  		* var(--ycent)
+	  		* var(--zoom)
+  		)`,
 	},
-
 	// for TEXT articles
 	"article[type=\"text\"] section": {
 		"text-align":"var(--align)", // left | center | right | justify

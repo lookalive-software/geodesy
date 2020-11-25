@@ -35,7 +35,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
     let radius = 50 // 100
 
     // default values...
-    let linejoin = "round"
+    let linejoin = "round" // I could load options if I want to move these to a default file
     let precision = "4"
     let stepover = "0.002"
     let {
@@ -55,9 +55,9 @@ module.exports = function(params /* articleparams */, index, arrayref){
         // precision,
         // stepover,
         embedurl,
-        embedtag
+        embedtag,
+        art, // article title
     } = params
-
 
     // if we're in embed or text mode, we're going to unionize the polygons
     let unionize = ["embed", "text"].includes(type)
@@ -178,7 +178,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
         "style": cssvars, // mostly vars 
         "childNodes": [ // section gets psuedo elements to place float shapes in the vicinity of flowed text inside section
             {"section": {
-                "title": "article " + index, // TODO replace with params.title once it exists
+                "title": art || ("article " + index), // TODO replace with params.title once it exists
                 "style": {
                     /* overwrites the parents assignement to a mask to frame the content of section */
                     "--mask": "url('" + maskurl + "#section')"

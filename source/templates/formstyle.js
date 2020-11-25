@@ -22,8 +22,9 @@ module.exports = {
             "border":"2px solid rgba(0,0,0,0.2)",
             "display":"flex",
             "overflow":"hidden auto",
+            "padding-bottom": "0",
+            "flex-direction": "column",
         },
-
         "menu": {
             // "padding-left": "20px",
             "width": "200px",
@@ -109,6 +110,11 @@ module.exports = {
         },
         "input[type=\"text\"], select": {
             "width":"60%"
+        },
+        "input[name=\"web\"], [name^=\"art\"]": {
+            "width": "100%",
+            "text-align": "center",
+            "padding": "5px 0",
         },
         "input[type=\"radio\"]": {
             // "display":"none"

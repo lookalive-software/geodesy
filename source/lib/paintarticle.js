@@ -96,8 +96,8 @@ module.exports = function(params /* articleparams */, index, arrayref){
     let [xunit, yunit] = lattice.meta.wallpaper
 
     Object.assign(cssvars, {
-        "--xunit": 2 * xunit * radius, // multiply by 2 because wallpaper is just half of the box.
-        "--yunit": 2 * yunit * radius
+        "--xunit": shorten(2 * xunit * radius), // multiply by 2 because wallpaper is just half of the box.
+        "--yunit": shorten(2 * yunit * radius)
     }) // maybe the other one is secleft, secheight... al, at, aw, ah, sl, st, sw, sh
 
     let atomgeometry, uniongeometry

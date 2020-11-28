@@ -26,22 +26,21 @@ module.exports = {
             "flex-direction": "column",
         },
         "menu": {
-            // "padding-left": "20px",
-            "width": "200px",
-            "margin": "0 auto"
-            // "border-radius":"8px",
-            // "border":"2px solid rgba(0,0,0,0.2)",
+            "margin": "0 auto",
+            "width": "100%",
+            "padding": "0 15px"
         },
-        // this will be the tab button
-
+        // these are the paint | move (mode) buttons and the clone | pop buttons (cmd)
         "menu > [name=\"mode\"], menu [name=\"cmd\"]": {
             "width": "50%",
             "position": "relative" // stacking order hack to overlap shadow
         },
+        // these are the text | embed | net buttons
         "menu [name^=\"type\"]": {
             "width": "calc(100% / 3)",
             "position": "relative"
         },
+        // elements that rely on focus are programmatically updated focused=true/false
         "div[focused=\"false\"]": {
             "display": "none"
         },
@@ -54,7 +53,8 @@ module.exports = {
         "form[mode=\"move\"] fieldset[for=\"paint\"], form[mode=\"paint\"] fieldset[for=\"move\"]": {
             "display": "none"
         },
-
+        // update is wrapped ein noscript
+        // defocus is the top button of the focus fieldset
         "menu > [name=\"defocus\"], menu > [value=\"update\"]": {
             "width": "100%"
         },
@@ -117,11 +117,13 @@ module.exports = {
             "padding": "5px 0",
         },
         "input[type=\"radio\"]": {
+            // in case I want to hide the bubbles themselves and apply other :checked stytles
             // "display":"none"
         },
-        "input[type=\"checkbox\"]": {
-            "width":"20px","height":"20px"
-        },
+        // no checkboxes at the moment...
+        // "input[type=\"checkbox\"]": {
+        //     "width":"20px","height":"20px"
+        // },
         // labels that are neighbors of type radio?
         "input[type=\"radio\"] ~ label": {
             "font-size": "small"
@@ -142,14 +144,6 @@ module.exports = {
             "padding": "0",
             "height": "30px"
         },
-        "[name^=\"fillcolor\"]":{
-            "right":"75px",
-            "bottom": "15px"
-        },
-        "[name^=\"strokecolor\"]":{
-            "left":"75px",
-            "top": "15px"
-        },
         "alphawrap": {
             "display": "block",
             "mask-image": "linear-gradient(to right, transparent, black)",
@@ -157,8 +151,8 @@ module.exports = {
             "margin-top": "-15px"
         },
         "textarea": {
-            "min-width": "176px",
-            "max-width": "176px",
+            "min-width": "201px",
+            "max-width": "201px",
             "min-height": "9em"
         }
     }

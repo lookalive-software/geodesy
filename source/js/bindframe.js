@@ -35,6 +35,8 @@ form.addEventListener('submit', event => {
             hiddenfocus.setAttribute("value", newfocus) // sets the value on the hidden form that gets submitted
             // actually why do I have a hiddenfocus? If the server builds the radiobuttons and checks one, isn't that my focus that gets submitted?
             // 
+            // going to run through this twice, once for direct descendents from a menu
+            // 
             document.querySelectorAll('div[focused]')
                     .forEach((div, index) => div.setAttribute("focused", newfocus == index)) // true or false
             return false // to ignore form submission 
@@ -42,6 +44,9 @@ form.addEventListener('submit', event => {
 })
 
 document.querySelectorAll('input, select, textarea').forEach(input => {
+    input.addEventListener('change', event => {
+        console.log("CHANGE", event.target.name)
+    })
     input.addEventListener('input', event => {
         let key = event.target.name
         let hyphenpos = key.lastIndexOf('-')
@@ -84,8 +89,8 @@ document.querySelectorAll('input, select, textarea').forEach(input => {
                 // dig into the frame to setattribute to the title
                 // and grab the nth radio button off the focus form and update its innertext
                 // the numerical number is used to actually sort the layers
-                // the art name is just cosmetic for the form, and used as the title in html
-                
+                // the art-title is just cosmetic for the form, and used as the title in html
+
             case 'focus':
                 // when you click a radio button, name is focus -- gonna submit the form
                 // submit will be caught

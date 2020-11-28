@@ -2,7 +2,7 @@ module.exports = function(paramarray, options){
     console.log("FORM", {paramarray, options})
     return {"form": {
         "target": "frame",
-        "action": "./paramarray", // current space name 
+        "action": "./art", // current space name 
         "focus": options.focus, // 0 by default, may be null in 'defocus' mode !
         "mode": options.mode, // | paint | move -- this is a global setting that controls what click/drag tools are available in the iframe
         // focus turns each article into a button that changes which  
@@ -49,7 +49,7 @@ module.exports = function(paramarray, options){
                     //     [ options.focus == "null"  ? "checked" : "" ]: ""
                     // }},
                     ...paramarray.map((param, index) => (
-                        {"section": [
+                        {"label": [
                             {"input": {
                                 "type":"radio",
                                 "name":"focus",
@@ -70,7 +70,7 @@ module.exports = function(paramarray, options){
             // one 'focus' button
             {"menu": [
                 {"noscript": [{"input": {"type":"submit", "value": "update"}}]}, // noscript fallback to manually submit the form
-                {"fieldset": [{"section": [
+                {"fieldset": [{"label": [
                     {"input": {
                         "type":"submit",
                         "name": "cmd",
@@ -160,7 +160,7 @@ module.exports = function(paramarray, options){
                                     }}
                                     // draw the bitmask in binary somehow -- flow content with width / 16 so they wrap?
                                 ]},
-                                {"section": [ // how do I add checked to the appropriate radio? maybe don't have radios....
+                                {"label": [ // how do I add checked to the appropriate radio? maybe don't have radios....
                                     {"input": {"type":"radio", "name":`maskmode-${n}`, "value":"nested", "id":`nested-${n}`, [param.maskmode == "nested" ? "checked" : ""]: ""}},
                                     {[`label for="nested-${n}"`]:["orbital"]},
                                     {"input": {"type":"radio", "name":`maskmode-${n}`, "value":"flat", "id": `flat-${n}`, [param.maskmode == "flat" ? "checked" : ""]: ""}},
@@ -297,7 +297,7 @@ module.exports = function(paramarray, options){
                                                     "type": "text", "name": `embedurl-${n}`, "value": param.embedurl
                                                 }} 
                                             ]},
-                                            {"section": [
+                                            {"label": [
                                                 {"input": {
                                                     "type":"radio",
                                                     "name":`embedtag-${n}`,
@@ -310,7 +310,7 @@ module.exports = function(paramarray, options){
                                                     "childNodes": ["<iframe>"]
                                                 }}
                                             ]},
-                                            {"section": [
+                                            {"label": [
                                                 {"input": {
                                                     "type":"radio",
                                                     "name":`embedtag-${n}`,
@@ -323,7 +323,7 @@ module.exports = function(paramarray, options){
                                                     "childNodes": ["<video>"]
                                                 }},
                                             ]},
-                                            {"section": [
+                                            {"label": [
                                                 {"input": {
                                                     "type":"radio",
                                                     "name":`embedtag-${n}`,
@@ -336,7 +336,7 @@ module.exports = function(paramarray, options){
                                                     "childNodes": ["<img>"]
                                                 }}
                                             ]},
-                                             {"section": [
+                                             {"label": [
                                                 {"input": {
                                                     "type":"radio",
                                                     "name":`embedtag-${n}`,

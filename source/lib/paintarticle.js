@@ -24,8 +24,6 @@ function bbox2topleft([x1, y1, x2, y2]){ return [x1, y1, x2 - x1, y2 - y1]} /* m
 // then I can use Math.max(...) to find the largest horizontal position, and largest veritcal position
 // double those and use for width and height: this keeps 50% 50% as my origin to position relatively to
 
-// so for each
-// let left = 
 
 module.exports = function(params /* articleparams */, index, arrayref){
     // bump shells up to the minumum needed to fill min wallpaper
@@ -49,7 +47,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
         strapwork,
         content,
         bitmask,
-        maskmode,
+        maskmode, // flat | nested
         // wallpaper,
         // unionize,
         // precision,
@@ -70,6 +68,8 @@ module.exports = function(params /* articleparams */, index, arrayref){
     // doesnt support e notation
 
     let boolmask = BigInt(bitmask).toString(2).split('').map(Number).map(Boolean).reverse() // convert 1 and 0 strings into true and false values
+    // let boolmask = Array.from({length: bitmask - 1}, e => false).concat(true)
+
 
     let flatgeometry = lattice.shells.flat()
     let maskedgeometry = (maskmode === 'nested')

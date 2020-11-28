@@ -120,7 +120,8 @@ module.exports = function(paramarray, options){
                                         // 'square', 'pyritohedron', 'p4octagon', 'honeycomb', 'doublesquares', 'alternatetriangles'
                                         "value": param.motif,
                                         "childNodes": [
-                                            "square", 
+                                            "square",
+                                            "goldenstars", 
                                             "2to1brick",
                                             "root13star",
                                             "pyritohedron",

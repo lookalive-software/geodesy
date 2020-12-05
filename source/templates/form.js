@@ -2,7 +2,7 @@ module.exports = function(paramarray, options){
     console.log("FORM", {paramarray, options})
     return {"form": {
         "target": "frame",
-        "action": "./art", // current space name 
+        "action": "/art/" + options.web, // current space name 
         "focus": options.focus, // 0 by default, may be null in 'defocus' mode !
         "mode": options.mode, // | paint | move -- this is a global setting that controls what click/drag tools are available in the iframe
         // focus turns each article into a button that changes which  
@@ -27,7 +27,15 @@ module.exports = function(paramarray, options){
                         // this is actually "room name" for my websocket form-sync
                         // so each of us can change different parameters and stay sync'd up
                         // if we have last-best-hash that is! Or reject you for being slow to the draw, slow connections for 5 sec.
-                    }}
+                    }},
+                    {"label": ["scale", {"input": {
+                        "type":"range",
+                        "max": "1",
+                        "min": "0.1",
+                        "step": "0.01",
+                        "name":`--zoomg`,
+                        "value": options["--zoomg"]
+                    }}]},
                 ]},
                 {"input": {
                     "type":"submit",
@@ -121,7 +129,7 @@ module.exports = function(paramarray, options){
                                         "value": param.motif,
                                         "childNodes": [
                                             "square",
-                                            "goldenstars", 
+                                            "goldenstars2", 
                                             "2to1brick",
                                             "root13star",
                                             "pyritohedron",
@@ -141,7 +149,7 @@ module.exports = function(paramarray, options){
                                 {"label": [
                                     "shells", 
                                     {"input":{
-                                        "name": `shells-${n}`, "type":"number", "min":"1", "max": "50", "step":"1", "value": param.shells
+                                        "name": `shells-${n}`, "type":"number", "min":"1", "max": "60", "step":"1", "value": param.shells
                                     }}
                                 ]},
                                 {"label": [
@@ -165,6 +173,14 @@ module.exports = function(paramarray, options){
                                     {[`label for="nested-${n}"`]:["orbital"]},
                                     {"input": {"type":"radio", "name":`maskmode-${n}`, "value":"flat", "id": `flat-${n}`, [param.maskmode == "flat" ? "checked" : ""]: ""}},
                                     {[`label for="flat-${n}"`]:["elemental"]}
+                                ]},
+                                {"label": [ // how do I add checked to the appropriate radio? maybe don't have radios....
+                                    {"input": {"type":"radio", "name":`linejoin-${n}`, "value":"bevel", "id":`bevel-${n}`, [param.linejoin == "bevel" ? "checked" : ""]: ""}},
+                                    {[`label for="bevel-${n}"`]:["bevel"]},
+                                    {"input": {"type":"radio", "name":`linejoin-${n}`, "value":"round", "id": `round-${n}`, [param.linejoin == "round" ? "checked" : ""]: ""}},
+                                    {[`label for="round-${n}"`]:["round"]},
+                                    {"input": {"type":"radio", "name":`linejoin-${n}`, "value":"miter", "id": `miter-${n}`, [param.linejoin == "miter" ? "checked" : ""]: ""}},
+                                    {[`label for="miter-${n}"`]:["miter"]}
                                 ]},
                                 {"label": ["fill", {"input": {
                                     "title":"Fill Opacity", 

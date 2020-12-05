@@ -25,7 +25,7 @@ const defaultParam = require('../types/defaultParam')
 const defaultOption = require('../types/defaultOption')
 const mimetypes = require('../types/mimetypes')
 
-const motifs = ["square", "honeycomb", "pyritohedron", "doublesquares"]
+const motifs = ["square", "honeycomb", "pyritohedron", "doublesquares", "2to1brick", "alternatetriangles", "root13star", "goldenstars2"]
 let choose = choices => choices[Math.floor(Math.random() * choices.length)]
 
 // here I use defaultParam 
@@ -69,7 +69,14 @@ http.createServer((req, res) => {
 
     let { pathname, query } = url.parse(req.url)
     let { name, ext } = path.parse(pathname)
+    let [_, route, ...resource] = pathname.split('/')
     let { paramarray, options } = paramparse(query)
+
+    resource = resource.join('-')
+    // if !options.web, options.web = resource
+    console.log({route, name, ext})
+
+
 
     // it would be really great to have typed options that coerce stuff for me
     // modifyParamArray pulls defaultParams
@@ -86,11 +93,12 @@ http.createServer((req, res) => {
     // }
     // until I have an actual mode-switched implemented I'll skip this step
     console.log(name)
-    switch(name){
+    switch(route){
         case '':
             res.writeHead(301, {"Location": "/form"})
             res.end()
         break
+        // in art | form, use the pathname to look up an object, querybody.link 
         case 'form':
             paramarray = modifyParamArray(paramarray, options)
             res.end(elementary([
@@ -118,6 +126,7 @@ http.createServer((req, res) => {
                     // this should also be the favicon and metacharset and all
                     {"title":["Geodesy"]},
                     {"meta":{"charset":"UTF-8"}},
+                    {"style": {"body": {"--zoomg": options["--zoomg"]}}},
                     favicon,
                     globalstyle,
                     articlestyle
@@ -130,21 +139,16 @@ http.createServer((req, res) => {
                 }}
             ]))
         break
-        // later, I can request /65536/, /sha3/ etc to encode our intent of what kind of address we're looking for
-        // plus it gives me a way to branch off at the root of the URL so I can keep form / paramarray and still fallthrough to 'read any file'
-        // oh yeah so even UTF8 is a different response then just letting you read a file at some file path
-        // so I'll do my best to allow you to upload files into the root folder, making the whole server able to pack up and download for local deployment
-        // How about a sciter program that allows loading up a tarball and using it as your backend
-        // just because I want to do as little translation as possible, maybe a server that accepts some path and then goes and grabs that tarball 
-        case 'UTF8':
-            // this needs to be an in-memory hash, loaded at startup and periodically overwritten (write then link)
-            // but that lets me backup maybe even to the package.json so if I have this one file, I can reach out to the git repo + have all the saved URLs in memory
-            // Ah -- taking whatever name you have for it, and then compressing it to a shorturl lets you have decodable long names in as little space as possible
-            // Oh! The base65536 URLs are magic because they don't require the remote machine to have the file saved ! It is the compressed version of the URL
-            // Right this whole thing is *I have to store compressed strings* but in UTF8, so I don't have to even store them anymore
-            // If you send me a base65536 url, I can just convert it to bits and back into UTF8 and then redirect you to that decoded URL
-            // maybe not the fastest to decompress but probably a hell of a lot faster than JSON buffers!
-            // but for now, let me save a "url/to/space" with matching querystring -- which will itself contain the urltospace
+        case 'static':
+        // only serving from 'hash', 'font', 'source/js', and uploaded files
+        // /uploads/ GET / POST
+        // all of these will be a hash too
+        // static will look relative to the project folder
+        /// so have an uploads folder to store files locally
+        // easier to back up the whole server + content that way
+        // so, move prepend all requests with static
+        // then use this as a fallthrough, if url doesn't include art, form, or static, then redirect, prepend 'form'...
+        // could decide whether to by default redirect to form or art
         default:
             res.writeHead(200, {
                 'Content-Type': mimetypes[ext] || "text/plain",

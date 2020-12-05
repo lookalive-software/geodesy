@@ -8,11 +8,12 @@ module.exports = Object.freeze({
         "strapwork": 5, // 0 50 1
         "bitmask": 0, // some sum of binary vector, no max. must be int I guess.
         "maskmode": "flat", // || "nested"
-        "--fillopacity": 1,
+        "linejoin": "round", // || "miter" | "bevel"
+        "--fillopacity": 1, // 0 1
         "--fillcolor": "#ffffff",
-        "--strokeopacity": 1,
+        "--strokeopacity": 1, // 0 1
         "--strokecolor": "#000000",
-        "--blur": 0,
+        "--blur": 0, // 0 < 0.1x < 20
         // fieldset for=move
         "--zoom": 1, // 0.2 < 0.01x < 3
         "--xstep": 0, // -Inf < 1x < Inf -- multiplies the wallpaper shift to move the pattern

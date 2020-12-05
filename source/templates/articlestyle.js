@@ -1,10 +1,12 @@
+// it would be nice to apply pointer events none and 50% transparency / gray out when mode is net -- since x and y don't apply to wallpapers
+
 // since no params are used this could be JSON but then I couldn't have comments
 module.exports = { "style": {
 	// every article is a new container moved to the origin at 0,0
 	// so that the positioning of sections and sectionafters can be done relative to center of the screen
     "@font-face": {
         "font-family": "recursive",
-        "src": `url('/font/recursive.woff2') format('woff2-variations')`,
+        "src": `url('/static/font/recursive.woff2') format('woff2-variations')`,
         "font-weight": "300 1000"
     },
     "html": {
@@ -34,6 +36,8 @@ module.exports = { "style": {
 			var(--top)
 		  - 1px
 	  	  * var(--yunit)
+	  	  * var(--zoom)
+		  * var(--zoomg)
 		  * calc(
 		  	  var(--ystep)
 		  	+ var(--ycent)
@@ -42,6 +46,8 @@ module.exports = { "style": {
 		"left": `calc(
 			var(--left)
 		  + 1px
+	  	  * var(--zoom)
+		  * var(--zoomg)
   	  	  * var(--xunit)
 		  * calc(
 		  	  var(--xstep)
@@ -57,7 +63,7 @@ module.exports = { "style": {
 	    "-webkit-mask-image": "var(--mask)",
 	    "-webkit-mask-position": "center",
 		"transform": `
-			scale(var(--zoom))
+			scale(calc( var(--zoom) * var(--zoomg)))
 			rotate(calc(1deg * var(--spin)))
 		`
 	},
@@ -101,30 +107,35 @@ module.exports = { "style": {
 		"left": "-100%",
 		"top": "-100%",
 		// any movement of the wallpaper should be applied to:
-		"mask-size": "calc(var(--width) * var(--zoom))",
+		"mask-size": "calc(var(--width) * var(--zoom) * var(--zoomg))",
 		"mask-position": `calc(
 			50%
 		  + var(--width)
 		  * var(--xcent)
 		  * var(--zoom)
+		  * var(--zoomg)
 	  	) calc(
 	  		50%
 	  		+ var(--height)
 	  		* var(--ycent)
 	  		* var(--zoom)
+		  	* var(--zoomg)
+
   		)`,
 		// for chrome:
-		"-webkit-mask-size": "calc(var(--width) * var(--zoom))",
+		"-webkit-mask-size": "calc(var(--width) * var(--zoom) * var(--zoomg))",
 		"-webkit-mask-position": `calc(
 			50%
 		  + var(--width)
 		  * var(--xcent)
 		  * var(--zoom)
+	  	  * var(--zoomg)
 	  	) calc(
 	  		50%
 	  		+ var(--height)
 	  		* var(--ycent)
 	  		* var(--zoom)
+		  	* var(--zoomg)
   		)`,
 	},
 	// for TEXT articles

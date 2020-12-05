@@ -55,7 +55,10 @@ exports.cachelattice = function({motif /* enum */, shells /* number */}){
         // how many orbitals do you want?
         // take the ceiling of the natual log and add one (or two? this was experimentally derived), 
         // that's how big the table has to be to return those orbits
+        console.log("SHELLS", shells)
         let tablesize = λ.N(λ.run(`ceiling(log(${shells})) + 2`))
+        console.log("TABLE", tablesize)
+        // let tablesize = shells
         // we're building up from the canonical motif descriptor json
         // MODIFYING motifCopy.meta.viewbox property: flip the sign on the viewbox and turn them into numerics before writing to cache
         // TODO why did I put an if statement around this? under what conditions would this overwrite the viewbox twice?
@@ -73,7 +76,8 @@ exports.cachelattice = function({motif /* enum */, shells /* number */}){
             /* MODIFYING motifCopy.motif[shapeIndex].polygon */
             shape.polygon = shape.polygon.map(point => point.map(λ.shorten)) // converting all the points of all the polygons to numeric symbols
             // console.log(shape.polygon)
-
+            console.log("SHAPE OFFSET")
+            console.log(shape.offset)
             λ.applyShift(
                 λ.M(
                     λ.dot(
@@ -86,12 +90,13 @@ exports.cachelattice = function({motif /* enum */, shells /* number */}){
                 ),
                 shape.offset
             ).map(([x,y]) => {
+                console.log("XY", {x,y})
                 // returning an array of points [[x,y]], one xy pair for each point in this lattice
                 let thisnorm =  λ.calcNorm(x,y)
-
+                console.log("NORM", {thisnorm})
                 let polygonData = {
-                    x,
-                    y, // still algebraic numbers
+                    x: λ.shorten(x),
+                    y: λ.shorten(y), // still algebraic numbers
                     shapeIndex // need to reach back into motifCopy.motif[shapeIndex].polygon to get pts
                 }
                 // Basically I'm building up shellsMap by pushing all the points into [norm]:shells
@@ -103,19 +108,25 @@ exports.cachelattice = function({motif /* enum */, shells /* number */}){
                 // and it just needs to be upgraded into an array of arrays of polygonData (with offset points)
             })
         })
+        // console.log(motifCopy.shells)
         // motifCopy.shells has now been built up as an array of shells of points
         // sort the entries by their numeric norm in 0th index of each 'entry'
         // then map over this sorted object entry grabbing just the 
         motifCopy.shells = Object.entries(motifCopy.shells) // [[norm, point[]], [norm, point[]]]
-        .sort((a,b) => λ.N(a[0]) - λ.N(b[0])) // at this point we've got a sorted array with smallest norm at the head and the largest norms at the tail
+        .sort((a,b) => {
+            console.log({a, b})
+            return λ.N(a[0]) - λ.N(b[0])
+        }) // at this point we've got a sorted array with smallest norm at the head and the largest norms at the tail
         .slice(0, shells) // from this sorted list of shells, slice down to just the requested amount
         .map(([_, polygonData]) => polygonData) // drop the norm, just work on [[polygonData]]
         .map(shells => shells.map(
             ({x,y,shapeIndex}) => { // the entries are still in a [[norm, point[]]] format
             // so now we're mapping over points
+
                 // we can calculate spins of each of there.  Should points be converted to numeric at the point too?
                 let xoffset = λ.shorten(x) // λ.shorten returns numeric...
                 let yoffset = λ.shorten(y)
+
                 // at this point xoffset and yoffset could be summed with article offset, to get global spin
                 let thisspin = λ.shorten(Math.atan2(xoffset, yoffset)) // gives spin to the center between -1 and 1 radians.
                 let thesepts = motifCopy.motif[shapeIndex].polygon.map(
@@ -126,7 +137,7 @@ exports.cachelattice = function({motif /* enum */, shells /* number */}){
                     x: xoffset, // y position of center of polygon
                     y: yoffset, // x position of center of polygon
                     spin: thisspin, // -1 to 1 radians
-                    pts: closePolygon(thesepts) // [[x1,y1]...[x1,y1]] closed form for Turf.polygon (svg polygons don't need to be closed)
+                    pts: closePolygon(thesepts) // [[x1,y1]...[xn,yn]] closed form for Turf.polygon (svg polygons don't need to be closed)
                 })
             })
         )

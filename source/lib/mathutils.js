@@ -2,8 +2,13 @@ var λ = require('algebrite');
 
 // An "algebraic" number, a string representing a number that Algebrite can parse
 function shorten(algebraic){
+    if(isNaN(N(algebraic))){
+        console.log(algebraic, "ISNAN")
+        process.exit()
+    }
     // truncates unnecessary precision, converting to a js Number if not already
     let numeric = algebraic.toPrecision ? algebraic.toPrecision(5) : N(algebraic).toPrecision(5)
+    // console.log("numeric", Math.abs(numeric), Math.abs(numeric) > 1e-12 )
     // ??? Math.abs takes strings ! no problem lol
     return Math.abs(numeric) > 1e-12 ? parseFloat(numeric) : 0
     // return really tiny numbers as 0, use absolute value to consider the magnitude of negative numbers
@@ -68,7 +73,7 @@ function calcSpin(x, y) {
 }
 exports.calcSpin = calcSpin;
 function calcNorm(x, y) {
-    return λ.run("abs([" + x + "," + y + "])");
+    return shorten("abs([" + x + "," + y + "])");
 }
 exports.calcNorm = calcNorm;
 function dot(standardbasis, basis) {
@@ -85,8 +90,8 @@ function applyShift(dimensions, [xoffset,yoffset]) {
     // instead, I should be taking 'dimensions' as my [[],[]] and a translation matrix to calculate a whole new dimensions table in one op
     
     return Array.from(dimensions, ([x,y]) => [
-        λ.run(`${x} + (${xoffset})`) ,
-        λ.run(`${y} + (${yoffset})`)
+        shorten(`${x} + (${xoffset})`) ,
+        shorten(`${y} + (${yoffset})`)
     ])
 }
 exports.applyShift = applyShift;

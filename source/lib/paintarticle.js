@@ -30,16 +30,16 @@ module.exports = function(params /* articleparams */, index, arrayref){
     // so far these are the params needed 
     console.log(params)
     // moving to fixed radius for now
-    let radius = 50 // 100
+    let radius = 100 // 100
 
     // default values...
-    let linejoin = "round" // I could load options if I want to move these to a default file
+    // let linejoin = "round" // I could load options if I want to move these to a default file
     let precision = "4"
     let stepover = "0.002"
     let {
         xwindow, // from case net / wallpaper
         ywindow, 
-        // linejoin, // bevel | miter | round
+        linejoin, // bevel | miter | round
         motif,
         shells,
         type, // embed | text | jali
@@ -81,14 +81,13 @@ module.exports = function(params /* articleparams */, index, arrayref){
         maskedgeometry = flatgeometry // all polygons in this number of shells
         console.log(parseInt(boolmask.map(e => Number(e)).join(""), 2).toString(10), "is too large, or provided all 0s")
     }
-
+    console.log("flatgeometry", flatgeometry.length)
     let allpolygons = turf.featureCollection(flatgeometry.map(
         ({pts}) => turf.polygon([pts])
     ))
     let maskpolygons = turf.featureCollection(maskedgeometry.map(
         ({pts}) => turf.polygon([pts])
     ))
-
     // console.log("MASKPOLYGON", maskpolygons.features.map(e => e.geometry.coordinates))
     let articlebbox = turf.bbox(allpolygons) // returns [minx, miny, maxx, maxy] of bounding box
     let sectionbbox = turf.bbox(maskpolygons)

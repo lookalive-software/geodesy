@@ -27,6 +27,7 @@ module.exports = { "style": {
 		"left": "50%",
 		"top": "50%",
 		"filter": "blur(calc(var(--blur) * 1px))",
+		"transform": "scale(var(--zoomg))", // gets overwritten with 'none' for [type=net], zoomg is applied to mask size 
 	},
 	// offset the medallion so its center lies on the articles origin 
 	// this gets overwritten for NET articles
@@ -35,9 +36,8 @@ module.exports = { "style": {
 		"top": `calc(
 			var(--top)
 		  - 1px
-	  	  * var(--yunit)
 	  	  * var(--zoom)
-		  * var(--zoomg)
+	  	  * var(--yunit)
 		  * calc(
 		  	  var(--ystep)
 		  	+ var(--ycent)
@@ -47,7 +47,6 @@ module.exports = { "style": {
 			var(--left)
 		  + 1px
 	  	  * var(--zoom)
-		  * var(--zoomg)
   	  	  * var(--xunit)
 		  * calc(
 		  	  var(--xstep)
@@ -63,7 +62,7 @@ module.exports = { "style": {
 	    "-webkit-mask-image": "var(--mask)",
 	    "-webkit-mask-position": "center",
 		"transform": `
-			scale(calc( var(--zoom) * var(--zoomg)))
+			scale(var(--zoom))
 			rotate(calc(1deg * var(--spin)))
 		`
 	},

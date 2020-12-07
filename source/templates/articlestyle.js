@@ -34,7 +34,8 @@ module.exports = { "style": {
 	"section, article:after": {
 		"position": "absolute",
 		"top": `calc(
-			var(--top)
+		   	1px
+		  *	var(--top)
 		  - 1px
 	  	  * var(--zoom)
 	  	  * var(--yunit)
@@ -44,7 +45,8 @@ module.exports = { "style": {
 		  	)
 	  	)`,
 		"left": `calc(
-			var(--left)
+			1px
+		  * var(--left)
 		  + 1px
 	  	  * var(--zoom)
   	  	  * var(--xunit)
@@ -106,35 +108,38 @@ module.exports = { "style": {
 		"left": "-100%",
 		"top": "-100%",
 		// any movement of the wallpaper should be applied to:
-		"mask-size": "calc(var(--width) * var(--zoom) * var(--zoomg))",
+		"mask-size": "calc(1px * var(--width) * var(--zoom) * var(--zoomg))",
 		"mask-position": `calc(
 			50%
 		  + var(--width)
 		  * var(--xcent)
 		  * var(--zoom)
 		  * var(--zoomg)
+		  * 1px
 	  	) calc(
 	  		50%
 	  		+ var(--height)
 	  		* var(--ycent)
 	  		* var(--zoom)
 		  	* var(--zoomg)
-
+		  	* 1px
   		)`,
 		// for chrome:
-		"-webkit-mask-size": "calc(var(--width) * var(--zoom) * var(--zoomg))",
+		"-webkit-mask-size": "calc(1px * var(--width) * var(--zoom) * var(--zoomg))",
 		"-webkit-mask-position": `calc(
 			50%
 		  + var(--width)
 		  * var(--xcent)
 		  * var(--zoom)
 	  	  * var(--zoomg)
+	  	  * 1px
 	  	) calc(
 	  		50%
 	  		+ var(--height)
 	  		* var(--ycent)
 	  		* var(--zoom)
 		  	* var(--zoomg)
+		  	* 1px
   		)`,
 	},
 	// for TEXT articles

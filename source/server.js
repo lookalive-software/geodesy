@@ -53,6 +53,7 @@ function modifyParamArray(paramarray, options){
     }
 
     // if last element was deleted, we'll get reset
+    // this is a pattern I use a lot to init or push an array // might be an appropriate generator to not repeat myself
     if(paramarray.length == 0){
         // I can assume there's no global params either if theres 0 articles, assume blank slate
         paramarray.push(defaultArticle())
@@ -118,7 +119,27 @@ http.createServer((req, res) => {
             ]))
         break
         case 'art': 
-            paraymarray = modifyParamArray(paramarray, options)
+            paramarray = modifyParamArray(paramarray, options)
+            // get painted array while adding bbox to paramarray
+            let paintedarray = paramarray.map(paintarticle)
+            console.log(paramarray)
+
+            let [
+                width,
+                height
+            ] = [
+                paramarray.xmag * 2,
+                paramarray.ymag * 2
+            ]
+            console.log("LEFTTOP", paramarray.left, paramarray.top)
+            // take xmag and ymag, addjust them by adding 
+            // steps is a multiplier for wallpaper
+            // dont forget to add wallpaper width
+
+            // have to add a few style vars to the options group, filter out the vars, add to style
+            // paramArray.bbox ? yea take current viewbox and push to array
+            // and overwrite .bbox to be up to date -- current viewbox where everything is centered by the way!
+            // then TODO apply a nevagtive top/left margin to correctly place the center of the body in the center of the screen...
             // let body = paramarray.map(paintarticle)
             // let {width, height} = body.bbox || {} // undefined at first // I have to think about whether that's a different center to worry about, center of bbox world starts at 50,50,...
             res.end(elementary([
@@ -126,7 +147,8 @@ http.createServer((req, res) => {
                     // this should also be the favicon and metacharset and all
                     {"title":["Geodesy"]},
                     {"meta":{"charset":"UTF-8"}},
-                    {"style": {"body": {"--zoomg": options["--zoomg"]}}},
+                    // argument for putting zoomg in the body is I can use it in the width and height measurement of the body
+                    // so the body decreases corresponding to the bodies being zoomed out, so the scroll bars dissapear
                     favicon,
                     globalstyle,
                     articlestyle
@@ -134,8 +156,20 @@ http.createServer((req, res) => {
                 // instead of 
                 // {"body": paramarray.map(paintarticle)}
                 {"body": {
+                    "style": {
+                        "--zoomg": options["--zoomg"],
+                        "--xmag": paramarray["xmag"],
+                        "--ymag": paramarray["ymag"],
+                        "--marginleft": paramarray.left + 'px',
+                        "--margintop": paramarray.top + 'px',
+                        // have to add margin left to width so that the body is large enough...
+                        "width": `calc(var(--xmag) * 2px * var(--zoomg) + var(--marginleft))`,
+                        "height": `calc(var(--ymag) * 2px * var(--zoomg) + var(--margintop))`,
+                        "margin-left": "var(--marginleft)",
+                        "margin-top": "var(--margintop)"
+                    },
                     // width, height, top, left...
-                    "childNodes": paramarray.map(paintarticle)
+                    "childNodes": paintedarray
                 }}
             ]))
         break

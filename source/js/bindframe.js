@@ -75,6 +75,8 @@ document.querySelectorAll('input, select, textarea').forEach(input => {
         } else switch(varname){
             case '--zoomg':
                 console.log("ZOOMG")
+                // I don't like having to set the variable on the body
+                // an alternative would be to apply the variable to each individual article
                 frame
                     .contentDocument
                     .body

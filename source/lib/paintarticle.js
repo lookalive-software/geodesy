@@ -30,7 +30,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
     // so far these are the params needed 
     console.log(params)
     // moving to fixed radius for now
-    let radius = 100 // 100
+    let radius = 50 // 100
 
     // default values...
     // let linejoin = "round" // I could load options if I want to move these to a default file
@@ -153,11 +153,70 @@ module.exports = function(params /* articleparams */, index, arrayref){
     // these vars are used directly to position the medallions
     // but the wallpapers override -- be 100% of body 
     Object.assign(cssvars, {
-        "--left":   viewbox[0] + 'px', // ha doesnt matter if its a square
-        "--top":    viewbox[1] + 'px', // this might need to be flipped??
-        "--width":  viewbox[2] + 'px',
-        "--height": viewbox[3] + 'px'
+        "--left":   viewbox[0], // ha doesnt matter if its a square
+        "--top":    viewbox[1], // this might need to be flipped??
+        "--width":  viewbox[2],
+        "--height": viewbox[3]
     })
+    // if type net, Skip all this! only applies to embed/text "medallions"
+    // I just need to know the magnitude:
+    //  what's larger: leftmost or leftmost + width
+    //  what's larger: topmost or topmost + height
+    // copies scheme from article style to find left and top
+    console.log(cssvars)
+    let bboxtop = +cssvars["--top"]
+        - cssvars["--zoom"]
+        * cssvars["--yunit"]
+        * (+cssvars["--ystep"] + +cssvars["--ycent"])
+
+    let bboxleft = +cssvars["--left"]
+        + cssvars["--zoom"]
+        * cssvars["--xunit"]
+        * (+cssvars["--xstep"] + +cssvars["--xcent"])
+
+    console.log(bboxleft, bboxtop)
+    if(unionize){
+        arrayref.xmag = Math.max(
+            arrayref.xmag || null, 
+            Math.abs(bboxleft),
+            Math.abs(bboxleft + +cssvars["--width"]) // leading + to coerce to number
+        )
+        arrayref.ymag = Math.max(
+            arrayref.ymag || null, 
+            Math.abs(bboxtop),
+            Math.abs(bboxtop + +cssvars["--height"])
+        )
+        console.log(arrayref.xmag, arrayref.ymag)
+        console.log(arrayref.xmag + bboxleft, arrayref.ymag + bboxtop)
+        // after processing all bboxes, the maximum x and y magnitude are saved at .xmag/.ymag
+        // recalculating leftmargin is finding the minimum margin so I never have a margin too large
+        console.log(arrayref.left, arrayref.top)
+        
+        arrayref.left = Math.min(
+            arrayref.left || Infinity,
+            arrayref.xmag + bboxleft
+        )
+        arrayref.top = Math.min(
+            arrayref.top || Infinity,
+            arrayref.ymag + bboxtop
+        )
+        console.log(arrayref.left, arrayref.top)
+
+    }
+
+    // if minx or miny are negative, then minus a negative works for me, that is the distance the body has to be 'pulled up' to center that node.
+    // say if all articles are negative, to center everything my body will be equally positive as it is negative
+    // so I'll apply margintop to the body so I hide all that empty space
+
+    // I need to grab all four corners xy[2][4] 
+    // and then iterate over them searching for largest magnitude
+    // Math.max([xy].map(Math.abs))
+    // so from the left, top, width, height of the viewbox, 
+    // I do have to add radius * zoom * xcent/ycent to get the actual offset I'm responsible for!
+    // maybe just add a margin of unit size just to set a maximum and a standard margin...
+    // so when capturing your viewbox, add xunit and yunit to each magnitude
+    // this is magnitude (always positive) distance from 0,0 -- setting the four corners, same way I establish xunit/yunit via a single [x,y] magnitude vector
+
 
     let maskhash = paintmask({viewbox, radius, strapwork, atomgeometry, uniongeometry, precision, linejoin})
     

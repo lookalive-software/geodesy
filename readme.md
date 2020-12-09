@@ -67,3 +67,8 @@ OK so route utf8, check routes object for keyname -- overwrites the URL with the
 The form will get a link at that address -- two parts maybe! with and without the hash. click on either part and get the content.
 
 Adjust the labels to overlap it a little bit
+
+TODO 2
+
+Branches grow within a particular subdivision of space, and even tho I only track changes, I can view any particular state by rewinding or fast forwarding, with very low bandwidth for seeing "what the next change is" -- mostly small messages updating position and style parameters, with the occasional url or text, a few kilobytes at most. View cross-sections of branching (creating a finer grid and skinnier twigs if necessary, fractally, infinitely, as much space as you need)
+

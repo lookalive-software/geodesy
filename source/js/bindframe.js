@@ -1,5 +1,13 @@
+// this is only loaded on the /form/ route
+// the /art/ route is completely devoid of javascript
+// but, when editing the art, this does inject listeners into the iframe
+// so that I can click and drag and drop files etc
+
+
 let form = document.querySelector('form')
 let frame = document.querySelector('iframe')
+// let articles = 
+
 let defocus = document.querySelector('input[name="defocus"]')
 
 let hiddenmode = document.querySelector('input[type="hidden"][name="mode"]')
@@ -10,6 +18,25 @@ let hiddenfocus = document.querySelector('input[type="hidden"][name="focus"]')
 // instead of 
 
 form.submit()
+
+// first thing, 
+
+function focusArticle(articleid /* numberish */){
+    location.hash = articleid // updates url
+    // if I have a link on the form to jump to the view, it needs to know the hash too.
+    frame
+        .contentDocument
+        .body
+        .children[articleid]
+        .firstChild
+        .scrollIntoView()
+}
+
+// first thing
+// extra settimeout because load fires when subreources are loaded, but I'm not convinced it waits til first paint
+frame.addEventListener('load', () => {
+    focusArticle(hiddenfocus.value) // grab the focus that was rendered into the form markup    
+})
 
 // the buffer sits underneath the frame
 // before allowing the submission to reload the frame, the innerhtml of the document is copied to the buffer
@@ -35,11 +62,17 @@ form.addEventListener('submit', event => {
             event.preventDefault()
             // figure out which radio is now checked
             let newfocus = document.querySelector('[type="radio"][name="focus"]:checked').value
+            // newfocus better be a number !
+
             form.setAttribute("focus", newfocus) // 
             hiddenfocus.setAttribute("value", newfocus) // sets the value on the hidden form that gets submitted
             // actually why do I have a hiddenfocus? If the server builds the radiobuttons and checks one, isn't that my focus that gets submitted?
-            // 
+            focusArticle(newfocus)
             // going to run through this twice, once for direct descendents from a menu
+            // use newfocus to set location.hash...
+            // set location hash on target? hash on form highlights the menu with id=3, 
+            // I need to pass that on to the iframe... maybe a scrollintoview will have to do
+            // and then generate a link to the 'art' which includes the hash...
             // 
             document.querySelectorAll('div[focused]')
                     .forEach((div, index) => div.setAttribute("focused", newfocus == index)) // true or false

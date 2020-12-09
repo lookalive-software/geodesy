@@ -136,6 +136,7 @@ module.exports = function(paramarray, options){
                                             "p4octagon",
                                             "honeycomb", 
                                             "doublesquares",
+                                            "snubsquare",
                                             "alternatetriangles"
                                         ].map(motifname => (
                                             {"option": {
@@ -374,13 +375,13 @@ module.exports = function(paramarray, options){
                                             {"label": [
                                                 "ifx %", 
                                                 {"input":{
-                                                    "name":`--ifxoffset-${n}`,"type":"range","min":"-100","max": "100","step":"1","value": param["ifxoffset"]
+                                                    "name":`--ifxoffset-${n}`,"type":"range","min":"-100","max": "100","step":"1","value": param["--ifxoffset"]
                                                 }}
                                             ]},
                                             {"label": [
                                                 "ify %", 
                                                 {"input":{
-                                                    "name":`--ifyoffset-${n}`,"type":"range","min":"-100","max": "100","step":"1","value": param["ifyoffset"]
+                                                    "name":`--ifyoffset-${n}`,"type":"range","min":"-100","max": "100","step":"1","value": param["--ifyoffset"]
                                                 }}
                                             ]}]
                                         case 'text':

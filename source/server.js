@@ -25,7 +25,7 @@ const defaultParam = require('../types/defaultParam')
 const defaultOption = require('../types/defaultOption')
 const mimetypes = require('../types/mimetypes')
 
-const motifs = ["square", "honeycomb", "pyritohedron", "doublesquares", "2to1brick", "alternatetriangles", "root13star", "goldenstars2"]
+const motifs = ["square", "honeycomb", "pyritohedron", "doublesquares", "snubsquare", "2to1brick", "alternatetriangles", "root13star", "goldenstars2"]
 let choose = choices => choices[Math.floor(Math.random() * choices.length)]
 
 // here I use defaultParam 
@@ -67,15 +67,15 @@ function modifyParamArray(paramarray, options){
 }
 
 http.createServer((req, res) => {
-
-    let { pathname, query } = url.parse(req.url)
+    console.log(req.url)
+    let { pathname, query, hash } = url.parse(req.url)
     let { name, ext } = path.parse(pathname)
     let [_, route, ...resource] = pathname.split('/')
     let { paramarray, options } = paramparse(query)
 
     resource = resource.join('-')
     // if !options.web, options.web = resource
-    console.log({route, name, ext})
+    console.log({route, name, ext, hash})
 
 
 
@@ -122,16 +122,7 @@ http.createServer((req, res) => {
             paramarray = modifyParamArray(paramarray, options)
             // get painted array while adding bbox to paramarray
             let paintedarray = paramarray.map(paintarticle)
-            console.log(paramarray)
 
-            let [
-                width,
-                height
-            ] = [
-                paramarray.xmag * 2,
-                paramarray.ymag * 2
-            ]
-            console.log("LEFTTOP", paramarray.left, paramarray.top)
             // take xmag and ymag, addjust them by adding 
             // steps is a multiplier for wallpaper
             // dont forget to add wallpaper width
@@ -147,6 +138,8 @@ http.createServer((req, res) => {
                     // this should also be the favicon and metacharset and all
                     {"title":["Geodesy"]},
                     {"meta":{"charset":"UTF-8"}},
+            // hey it'd be very cool if I could use --zoomg to set media initial zoom
+                    // {"meta": {"name": "viewport", "content": `width=device-width, initial-scale=${options['--zoomg']}`}},
                     // argument for putting zoomg in the body is I can use it in the width and height measurement of the body
                     // so the body decreases corresponding to the bodies being zoomed out, so the scroll bars dissapear
                     favicon,
@@ -160,13 +153,8 @@ http.createServer((req, res) => {
                         "--zoomg": options["--zoomg"],
                         "--xmag": paramarray["xmag"],
                         "--ymag": paramarray["ymag"],
-                        "--marginleft": paramarray.left + 'px',
-                        "--margintop": paramarray.top + 'px',
-                        // have to add margin left to width so that the body is large enough...
-                        "width": `calc(var(--xmag) * 2px * var(--zoomg) + var(--marginleft))`,
-                        "height": `calc(var(--ymag) * 2px * var(--zoomg) + var(--margintop))`,
-                        "margin-left": "var(--marginleft)",
-                        "margin-top": "var(--margintop)"
+                        "width": `calc(var(--xmag) * 2px * var(--zoomg))`,
+                        "height": `calc(var(--ymag) * 2px * var(--zoomg))`,
                     },
                     // width, height, top, left...
                     "childNodes": paintedarray

@@ -62,6 +62,9 @@ module.exports = function(params /* articleparams */, index, arrayref){
     let wallpaper = !unionize // if its union'd, it's not a wallpaper
 
     // and then pull some styles out...
+    // would be better if cssvars had a getter which tried to coerce isNaN(Number()) -> return number
+    // would have to be a proxy to allow getting any attribute
+    // so far the only time I retrieve values from cssvars is I assume they're numbers
     let cssvars = Object.fromEntries(Object.entries(params).filter(([key]) => ~key.indexOf('--')))
     let lattice = cachelattice({motif, shells})
     // transform bitmask:string to a boolmask:Boolean[]
@@ -163,44 +166,58 @@ module.exports = function(params /* articleparams */, index, arrayref){
     //  what's larger: leftmost or leftmost + width
     //  what's larger: topmost or topmost + height
     // copies scheme from article style to find left and top
+    let N = Number
     console.log(cssvars)
-    let bboxtop = +cssvars["--top"]
-        - cssvars["--zoom"]
-        * cssvars["--yunit"]
-        * (+cssvars["--ystep"] + +cssvars["--ycent"])
+    let bboxtop = N(cssvars["--top"])
+        -   N(cssvars["--zoom"])
+        *   N(cssvars["--yunit"])
+        *  (N(cssvars["--ystep"]) + N(cssvars["--ycent"]))
 
-    let bboxleft = +cssvars["--left"]
-        + cssvars["--zoom"]
-        * cssvars["--xunit"]
-        * (+cssvars["--xstep"] + +cssvars["--xcent"])
+    let bboxleft = N(cssvars["--left"])
+        + N(cssvars["--zoom"])
+        * N(cssvars["--xunit"])
+        * N(N(cssvars["--xstep"]) + N(cssvars["--xcent"]))
 
     console.log(bboxleft, bboxtop)
+    // another way of sizing up the body instead of just doubling magnitude on either side of 0,
+    // I can make the body some multiple of of the unitcell, and then counter-adjust the center, add however many units to '0,0' of new body to put the origin back where it belongs
     if(unionize){
         arrayref.xmag = Math.max(
             arrayref.xmag || null, 
             Math.abs(bboxleft),
-            Math.abs(bboxleft + +cssvars["--width"]) // leading + to coerce to number
+            Math.abs(bboxleft
+                + N(cssvars["--width"])
+                * N(cssvars["--zoom"])
+            )
         )
         arrayref.ymag = Math.max(
             arrayref.ymag || null, 
             Math.abs(bboxtop),
-            Math.abs(bboxtop + +cssvars["--height"])
+            Math.abs(bboxtop
+                + Number(cssvars["--height"])
+                * Number(cssvars["--zoom"])
+            )
         )
-        console.log(arrayref.xmag, arrayref.ymag)
-        console.log(arrayref.xmag + bboxleft, arrayref.ymag + bboxtop)
-        // after processing all bboxes, the maximum x and y magnitude are saved at .xmag/.ymag
-        // recalculating leftmargin is finding the minimum margin so I never have a margin too large
-        console.log(arrayref.left, arrayref.top)
-        
-        arrayref.left = Math.min(
-            arrayref.left || Infinity,
-            arrayref.xmag + bboxleft
-        )
-        arrayref.top = Math.min(
-            arrayref.top || Infinity,
-            arrayref.ymag + bboxtop
-        )
-        console.log(arrayref.left, arrayref.top)
+        // console.log(arrayref.xmag, arrayref.ymag)
+        // console.log(arrayref.xmag + bboxleft, arrayref.ymag + bboxtop)
+        // // after processing all bboxes, the maximum x and y magnitude are saved at .xmag/.ymag
+        // // recalculating leftmargin is finding the minimum margin so I never have a margin too large
+        // console.log(arrayref.left, arrayref.top)
+        // // bboxleft is negative for anything left of center
+        // // bboxleft is postive when pushed right
+        // // marginleft is the distance between xmag and the leftmost article
+        // // leftmost being the lowest / most negative number
+        // // so I'm looking for the difference between negative xmag and bboxleft
+        // // and I want to keep the smallest difference
+        // arrayref.left = Math.min(
+        //     arrayref.left || Infinity,
+        //     -arrayref.xmag +   bboxleft
+        // )
+        // arrayref.top = Math.min(
+        //     arrayref.top || Infinity,
+        //     arrayref.ymag + bboxtop
+        // )
+        // console.log(arrayref.left, arrayref.top)
 
     }
 
@@ -237,6 +254,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
         "childNodes": [ // section gets psuedo elements to place float shapes in the vicinity of flowed text inside section
             {"section": {
                 "title": art || ("article " + index), // TODO replace with params.title once it exists
+                "id": index,
                 "style": {
                     /* overwrites the parents assignement to a mask to frame the content of section */
                     "--mask": "url('" + maskurl + "#section')"

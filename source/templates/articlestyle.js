@@ -33,6 +33,7 @@ module.exports = { "style": {
 	// this gets overwritten for NET articles
 	"section, article:after": {
 		"position": "absolute",
+		"overflow": "hidden",
 		"top": `calc(
 		   	1px
 		  *	var(--top)

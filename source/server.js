@@ -107,7 +107,8 @@ http.createServer((req, res) => {
                     {"iframe": {"name": "frame", "frameborder": "0"}},
                     // maybe update the form attripbute  
                     form(paramarray, options),
-                    {"script": {"src": "/static/source/js/bindframe.js"}}
+                    {"script": {"src": "/static/source/js/bindframe.js"}},
+                    {"script": {"src": "/static/source/js/artdrag.js"}}
                 ]}
             ]))
         break

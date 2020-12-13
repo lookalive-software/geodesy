@@ -40,7 +40,7 @@ function handleMove(event){
 	// I guess as a stopback in case mousemove fires without me holding the mouse down.
 	if(event.buttons && updatePos){
 		event.preventDefault();
-		updatePos(event.clientX, event.clientY);
+		updatePos(event.clientX, event.clientY, event.shiftKey);
 	}
 	return false;
 }
@@ -65,6 +65,9 @@ function createUpdatePos(clientX, clientY, article){
 	var theLastX = clientX;
 	var theLastY = clientY;
 
+  	let index = article.firstChild.id
+
+
 	var globalzoom = root.contentDocument.body.style.getPropertyValue("--zoomg")
 
 	var props = {
@@ -77,7 +80,7 @@ function createUpdatePos(clientX, clientY, article){
 		"zoom":  Number(article.style.getPropertyValue("--zoom")),
 	}
 
-  	var enclosedUpdatePos = function(clientX, clientY){
+  	var enclosedUpdatePos = function(clientX, clientY, shift = false){
       var movementX = clientX - theLastX;
       var movementY = clientY - theLastY;
       // overwrite enclosed variables
@@ -96,20 +99,38 @@ function createUpdatePos(clientX, clientY, article){
       // now find the amount that can't be accounted for in numbers of wallpaper units
       // gives a ratio 0-1 of how much of an xunit we've moved -- will roll over when its applied dxstep++, dystep++/--
       let dxcent = (movementX % xunitadj) / xunitadj
-      let dycent = (movementY % yunitadj) / yunitadj
+      let dycent = (movementY % yunitadj) / -yunitadj
 
+      console.log({dxcent, dycent})
+
+  	if(shift){
+      	// will be 0 or 1 if current xcent plus change in xcent is greater than one
+      	dxstep += Math.trunc(dxcent + props.xcent) // if dxcent is negative, this will add a negative number to step...
+      	dystep += Math.trunc(dycent + props.ycent)
+
+      	dxcent = dxcent % 1
+      	dycent = (dycent % 1) // invert
+
+      	if(dxcent < 0){
+      		dxcent = 1 + dxcent
+      	}
+      	if(dycent < 0){
+      		dycent = 1 + dycent
+      	}
+
+		article.style.setProperty("--xcent", dxcent.toPrecision(5))
+		article.style.setProperty("--ycent", dycent.toPrecision(5))
+	    form.querySelector(`[name="--xcent-${index}"]`).value = dxcent.toPrecision(5)
+	    form.querySelector(`[name="--ycent-${index}"]`).value = dycent.toPrecision(5)
+  	}
       // would have to store 
 
       // console.log({dxstep, dystep, dxcent, dycent})
 
-      article.style.setProperty("--xstep", props.xstep + dxstep)
-      article.style.setProperty("--ystep", props.ystep - dystep)
-
-      let index = article.firstChild.id
-
-     form.querySelector(`[name="--xstep-${index}"]`).value = props.xstep + dxstep
-     form.querySelector(`[name="--ystep-${index}"]`).value = props.ystep - dystep
-
+    article.style.setProperty("--xstep", (props.xstep + dxstep).toPrecision(5))
+    article.style.setProperty("--ystep", (props.ystep - dystep).toPrecision(5))
+    form.querySelector(`[name="--xstep-${index}"]`).value = (props.xstep + dxstep).toPrecision(5)
+    form.querySelector(`[name="--ystep-${index}"]`).value = (props.ystep - dystep).toPrecision(5)
 
   }
   return enclosedUpdatePos;

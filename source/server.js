@@ -25,7 +25,7 @@ const defaultParam = require('../types/defaultParam')
 const defaultOption = require('../types/defaultOption')
 const mimetypes = require('../types/mimetypes')
 
-const motifs = ["square", "honeycomb", "pyritohedron", "doublesquares", "snubsquare", "2to1brick", "alternatetriangles", "root13star", "goldenstars2"]
+const motifs = ["square", "cairo", "honeycomb", "pyritohedron", "doublesquares", "snubsquare", "2to1brick", "alternatetriangles", "root13star", "goldenstars2"]
 let choose = choices => choices[Math.floor(Math.random() * choices.length)]
 
 // here I use defaultParam 

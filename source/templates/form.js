@@ -129,6 +129,7 @@ module.exports = function(paramarray, options){
                                         "value": param.motif,
                                         "childNodes": [
                                             "square",
+                                            "cairo",
                                             "goldenstars2", 
                                             "2to1brick",
                                             "root13star",

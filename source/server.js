@@ -53,7 +53,6 @@ function modifyParamArray(paramarray, options){
     }
 
     // if last element was deleted, we'll get reset
-    // this is a pattern I use a lot to init or push an array // might be an appropriate generator to not repeat myself
     if(paramarray.length == 0){
         // I can assume there's no global params either if theres 0 articles, assume blank slate
         paramarray.push(defaultArticle())
@@ -70,12 +69,14 @@ http.createServer((req, res) => {
     console.log(req.url)
     let { pathname, query, hash } = url.parse(req.url)
     let { name, ext } = path.parse(pathname)
-    let [_, route, ...resource] = pathname.split('/')
+    // route is static | art | form | upload
+    let route = pathname.split('/').slice(1,2).pop()
+    // resource is the path of a file, either upload or static or the name of the 'space' being requested
+    let resource = pathname.split('/').slice(2).join('/')
     let { paramarray, options } = paramparse(query)
 
-    resource = resource.join('-')
     // if !options.web, options.web = resource
-    console.log({route, name, ext, hash})
+    console.log({route, resource, name, ext, hash})
 
 
 
@@ -86,14 +87,6 @@ http.createServer((req, res) => {
     options = Object.assign({}, defaultOption, options)
     options.focus = Number(options.focus)
 
-    console.log("OPT", options)
-    // if options.defocus, set focus to null
-    // this hides all local fieldsets + the buttons move/paint
-    // if(options.defocus){
-    //     options.focus = "null"
-    // }
-    // until I have an actual mode-switched implemented I'll skip this step
-    console.log(name)
     switch(route){
         case '':
             res.writeHead(301, {"Location": "/form"})
@@ -104,7 +97,7 @@ http.createServer((req, res) => {
             paramarray = modifyParamArray(paramarray, options)
             res.end(elementary([
                 {"head": [
-                    {"title":["Geodesy"]},
+                    {"title":["Geodesy"]}, // could be paramarray[options['focus']]['title'] // need to update it in bindframe.js on defocus
                     {"meta":{"charset":"UTF-8"}},
                     favicon, // maybe later favicon can take a url and embed it base64...
                     globalstyle,
@@ -114,7 +107,7 @@ http.createServer((req, res) => {
                     {"iframe": {"name": "frame", "frameborder": "0"}},
                     // maybe update the form attripbute  
                     form(paramarray, options),
-                    {"script": {"src": "/source/js/bindframe.js"}}
+                    {"script": {"src": "/static/source/js/bindframe.js"}}
                 ]}
             ]))
         break
@@ -178,8 +171,10 @@ http.createServer((req, res) => {
                 'Cache-Control': 'max-age=31536000' // here's the file never talk to me again 
                 // maybe to deal with uploads store them at their own hash so that I never have to 'check if a file has changed' or invalidate my cache
             })
-            fs.createReadStream('.' + pathname) // maybe .. ?
-            .on('error', err => res.end('404'))
+            fs.createReadStream('./' + resource) // maybe .. ?
+            .on('error', err => {
+                console.error(err), res.end('404')
+            })
             .pipe(res)
     }
 

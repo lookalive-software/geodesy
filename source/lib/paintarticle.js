@@ -237,9 +237,9 @@ module.exports = function(params /* articleparams */, index, arrayref){
 
     let maskhash = paintmask({viewbox, radius, strapwork, atomgeometry, uniongeometry, precision, linejoin})
     
-    let maskurl = '/hash/'+maskhash+'mask.svg' // return name of file to fetch
+    let maskurl = '/static/hash/'+maskhash+'mask.svg' // return name of file to fetch
     // only actually need shapes for text...
-    let shapeurl = '/hash/'+maskhash+'shape.svg'
+    let shapeurl = '/static/hash/'+maskhash+'shape.svg'
     // then get a shapeurl, still need viewbox, radius, uniongeometry, 
 
     Object.assign(cssvars, {

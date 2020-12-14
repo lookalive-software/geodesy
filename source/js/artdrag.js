@@ -66,6 +66,9 @@ function createUpdatePos(clientX, clientY, article){
 	var theLastY = clientY;
 
   	let index = article.firstChild.id
+  	console.log("INDEX", index)
+  	// click focus on whatever radio button is up there... it won't reload the page, no problem if already selected
+  	form.querySelector(`[type="radio"][name="focus"][id="${index}"]`).click() // surely it will exist, right?
 
 
 	var globalzoom = root.contentDocument.body.style.getPropertyValue("--zoomg")

@@ -99,38 +99,54 @@ function createUpdatePos(clientX, clientY, article){
       // now find the amount that can't be accounted for in numbers of wallpaper units
       // gives a ratio 0-1 of how much of an xunit we've moved -- will roll over when its applied dxstep++, dystep++/--
       let dxcent = (movementX % xunitadj) / xunitadj
-      let dycent = (movementY % yunitadj) / -yunitadj
+      let dycent = (movementY % yunitadj) / yunitadj
 
-      console.log({dxcent, dycent})
+      console.log("BEFORE", {dxstep, dystep})
 
   	if(shift){
       	// will be 0 or 1 if current xcent plus change in xcent is greater than one
-      	dxstep += Math.trunc(dxcent + props.xcent) // if dxcent is negative, this will add a negative number to step...
-      	dystep += Math.trunc(dycent + props.ycent)
 
-      	dxcent = dxcent % 1
-      	dycent = (dycent % 1) // invert
+        let totalxcent = dxcent + props.xcent
+        let totalycent = dycent + props.ycent
 
-      	if(dxcent < 0){
-      		dxcent = 1 + dxcent
-      	}
-      	if(dycent < 0){
-      		dycent = 1 + dycent
-      	}
+        if(totalxcent > 1){
+        	dxstep++
+        	dxcent = totalxcent - 1
+        } else if(totalxcent < 0){
+        	dxstep--
+        	dxcent = totalxcent + 1
+        } else {
+        	dxcent = totalxcent
+        }
 
-		article.style.setProperty("--xcent", dxcent.toPrecision(5))
-		article.style.setProperty("--ycent", dycent.toPrecision(5))
-	    form.querySelector(`[name="--xcent-${index}"]`).value = dxcent.toPrecision(5)
-	    form.querySelector(`[name="--ycent-${index}"]`).value = dycent.toPrecision(5)
+        if(totalycent > 1){
+        	dystep++
+        	dycent = totalycent - 1
+        } else if(totalycent < 0){
+        	dystep--
+        	dycent = totalycent + 1
+        } else {
+        	dycent = totalycent
+        }
+
+        // invert
+        dycent = 1 - dycent
+
+        console.log("AFTER", {dxstep, dystep})
+
+		article.style.setProperty("--xcent", dxcent.toFixed(2))
+		article.style.setProperty("--ycent", dycent.toFixed(2))
+	    form.querySelector(`[name="--xcent-${index}"]`).value = dxcent.toFixed(2)
+	    form.querySelector(`[name="--ycent-${index}"]`).value = dycent.toFixed(2)
   	}
       // would have to store 
 
       // console.log({dxstep, dystep, dxcent, dycent})
 
-    article.style.setProperty("--xstep", (props.xstep + dxstep).toPrecision(5))
-    article.style.setProperty("--ystep", (props.ystep - dystep).toPrecision(5))
-    form.querySelector(`[name="--xstep-${index}"]`).value = (props.xstep + dxstep).toPrecision(5)
-    form.querySelector(`[name="--ystep-${index}"]`).value = (props.ystep - dystep).toPrecision(5)
+    article.style.setProperty("--xstep", (props.xstep + dxstep).toFixed(0))
+    article.style.setProperty("--ystep", (props.ystep - dystep).toFixed(0))
+    form.querySelector(`[name="--xstep-${index}"]`).value = (props.xstep + dxstep).toFixed(0)
+    form.querySelector(`[name="--ystep-${index}"]`).value = (props.ystep - dystep).toFixed(0)
 
   }
   return enclosedUpdatePos;

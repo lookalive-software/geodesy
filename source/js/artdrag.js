@@ -9,6 +9,9 @@ var root = document.querySelector('iframe')
 // let form = document.querySelector('form')
 
 var updatePos
+// get focused article?
+
+
 
 // extra settimeout because load fires when subreources are loaded, but I'm not convinced it waits til first paint
 root.addEventListener('load', () => {
@@ -58,18 +61,22 @@ function handleMove(event){
 // so event.target is going ot be section, and all my cssvars on section.parentNode.style.cssVars
 function getCSSVars(article){
 	return {
-		"xunit": Number(article.style.getPropertyValue("--xunit")),
-		"yunit": Number(article.style.getPropertyValue("--yunit")),
-		"xcent": Number(article.style.getPropertyValue("--xcent")),
-		"ycent": Number(article.style.getPropertyValue("--ycent")),
-		"xstep": Number(article.style.getPropertyValue("--xstep")),
-		"ystep": Number(article.style.getPropertyValue("--ystep")),
-		"zoom":  Number(article.style.getPropertyValue("--zoom")),
-		"left":  Number(article.style.getPropertyValue("--left")),
-		"width":  Number(article.style.getPropertyValue("--width")),
-		"top":  Number(article.style.getPropertyValue("--top")),
+		"xunit":   Number(article.style.getPropertyValue("--xunit")),
+		"yunit":   Number(article.style.getPropertyValue("--yunit")),
+		"xcent":   Number(article.style.getPropertyValue("--xcent")),
+		"ycent":   Number(article.style.getPropertyValue("--ycent")),
+		"xstep":   Number(article.style.getPropertyValue("--xstep")),
+		"ystep":   Number(article.style.getPropertyValue("--ystep")),
+		"zoom":    Number(article.style.getPropertyValue("--zoom")),
+		"left":    Number(article.style.getPropertyValue("--left")),
+		"width":   Number(article.style.getPropertyValue("--width")),
+		"top":     Number(article.style.getPropertyValue("--top")),
 		"height":  Number(article.style.getPropertyValue("--height")),
 	}
+}
+
+function destroyUpdatePos(){
+	body.removeEventListener('mousemove', updatepos)
 }
 
 function createUpdatePos(clientX, clientY, article){
@@ -89,8 +96,8 @@ function createUpdatePos(clientX, clientY, article){
 	var props = getCSSVars(article)
 
   	return function(clientX, clientY, shift = false){
-		var movementX = clientX - theLastX;
-		var movementY = clientY - theLastY;
+		var movementX = clientX - theLastX
+		var movementY = -(clientY - theLastY)
 		// compare how far I am from thelastx, overwrite the lastX once
 		// I'm measuring how far I've moved since I first clicked, and applying that distance to the position of the article when it was first clicked
 		let xunitadj = props.xunit * props.zoom * globalzoom
@@ -106,7 +113,6 @@ function createUpdatePos(clientX, clientY, article){
 
 	  	if(shift){
 	      	// will be 0 or 1 if current xcent plus change in xcent is greater than one
-
 	        let totalxcent = dxcent + props.xcent
 	        let totalycent = dycent + props.ycent
 
@@ -130,18 +136,15 @@ function createUpdatePos(clientX, clientY, article){
 	        	dycent = totalycent
 	        }
 
-	        // invert
-	        dycent = 1 - dycent
-
 			article.style.setProperty("--xcent", dxcent.toFixed(2))
 			article.style.setProperty("--ycent", dycent.toFixed(2))
 		    form.querySelector(`[name="--xcent-${index}"]`).value = dxcent.toFixed(2)
 		    form.querySelector(`[name="--ycent-${index}"]`).value = dycent.toFixed(2)
 	  	}
 		article.style.setProperty("--xstep", (props.xstep + dxstep).toFixed(0))
-		article.style.setProperty("--ystep", (props.ystep - dystep).toFixed(0))
+		article.style.setProperty("--ystep", (props.ystep + dystep).toFixed(0))
 		form.querySelector(`[name="--xstep-${index}"]`).value = (props.xstep + dxstep).toFixed(0)
-		form.querySelector(`[name="--ystep-${index}"]`).value = (props.ystep - dystep).toFixed(0)
+		form.querySelector(`[name="--ystep-${index}"]`).value = (props.ystep + dystep).toFixed(0)
 
 		// calcMag(article)
 		recalcAll(article)

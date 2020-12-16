@@ -4,6 +4,7 @@ const {paintmask} = require('./paintmask')
 const {shorten} = require('./mathutils')
 
 const webcam = require('../templates/webcam.json')
+const N = Number // for explicit type casting
 
 // The only reason I need a black rect masked to the black background into a transparent cut-out of the geometry
 // is for shape-outside views
@@ -42,7 +43,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
         linejoin, // bevel | miter | round
         motif,
         shells,
-        type, // embed | text | jali
+        type, // embed | text | net
         // radius,
         strapwork,
         content,
@@ -141,16 +142,16 @@ module.exports = function(params /* articleparams */, index, arrayref){
     // x/ywindow is the number of steps to multiply by to increase the unitcell
     let [minx, miny, width, height] = bbox2topleft(sectionbbox)
     let viewbox = (wallpaper ? [
-        xunit * xwindow * -1, // min x
-        yunit * ywindow * -1, // min y
-        xunit * xwindow * 2,
-        yunit * ywindow * 2
+        radius * (xunit * xwindow * -1), // min x
+        radius * (yunit * ywindow * -1), // min y
+        radius * (xunit * xwindow * 2),
+        radius * (yunit * ywindow * 2)
     ] : [
-        minx - 1 * strapwork / 2, // farther left
-        miny - 1 * strapwork / 2, // farther up
-        width + 1 * strapwork, // wider
-        height + 1 * strapwork // taller
-    ]).map(n => shorten(n * radius))
+        (radius * minx) - (strapwork / 2), // farther left
+        (radius * miny) - (strapwork / 2), // farther up
+        (radius * width) + (strapwork / 1), // wider // divide by 1 coerces string -> Number
+        (radius * height) + (strapwork / 1) // taller
+    ]).map(shorten)
     // after calculating the viewbox of each wallpaper and medallion
     // I can set the values of left top width height, but this 
     // these vars are used directly to position the medallions
@@ -166,7 +167,6 @@ module.exports = function(params /* articleparams */, index, arrayref){
     //  what's larger: leftmost or leftmost + width
     //  what's larger: topmost or topmost + height
     // copies scheme from article style to find left and top
-    let N = Number
     console.log(cssvars)
     let bboxtop = N(cssvars["--top"])
         -   N(cssvars["--zoom"])
@@ -198,42 +198,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
                 * Number(cssvars["--zoom"])
             )
         )
-        // console.log(arrayref.xmag, arrayref.ymag)
-        // console.log(arrayref.xmag + bboxleft, arrayref.ymag + bboxtop)
-        // // after processing all bboxes, the maximum x and y magnitude are saved at .xmag/.ymag
-        // // recalculating leftmargin is finding the minimum margin so I never have a margin too large
-        // console.log(arrayref.left, arrayref.top)
-        // // bboxleft is negative for anything left of center
-        // // bboxleft is postive when pushed right
-        // // marginleft is the distance between xmag and the leftmost article
-        // // leftmost being the lowest / most negative number
-        // // so I'm looking for the difference between negative xmag and bboxleft
-        // // and I want to keep the smallest difference
-        // arrayref.left = Math.min(
-        //     arrayref.left || Infinity,
-        //     -arrayref.xmag +   bboxleft
-        // )
-        // arrayref.top = Math.min(
-        //     arrayref.top || Infinity,
-        //     arrayref.ymag + bboxtop
-        // )
-        // console.log(arrayref.left, arrayref.top)
-
     }
-
-    // if minx or miny are negative, then minus a negative works for me, that is the distance the body has to be 'pulled up' to center that node.
-    // say if all articles are negative, to center everything my body will be equally positive as it is negative
-    // so I'll apply margintop to the body so I hide all that empty space
-
-    // I need to grab all four corners xy[2][4] 
-    // and then iterate over them searching for largest magnitude
-    // Math.max([xy].map(Math.abs))
-    // so from the left, top, width, height of the viewbox, 
-    // I do have to add radius * zoom * xcent/ycent to get the actual offset I'm responsible for!
-    // maybe just add a margin of unit size just to set a maximum and a standard margin...
-    // so when capturing your viewbox, add xunit and yunit to each magnitude
-    // this is magnitude (always positive) distance from 0,0 -- setting the four corners, same way I establish xunit/yunit via a single [x,y] magnitude vector
-
 
     let maskhash = paintmask({viewbox, radius, strapwork, atomgeometry, uniongeometry, precision, linejoin})
     
@@ -242,11 +207,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
     let shapeurl = '/static/hash/'+maskhash+'shape.svg'
     // then get a shapeurl, still need viewbox, radius, uniongeometry, 
 
-    Object.assign(cssvars, {
-        "--mask": "url('" + maskurl + "#strapwork')"
-        // "--shapeleft": maskurl + "#shapeleft"
-        // "--shaperight": maskurl + "#shaperight"
-    })
+    cssvars['--mask'] = "url('" + maskurl + "#strapwork')"
 
     return {"article": {
         "type": type,
@@ -260,8 +221,6 @@ module.exports = function(params /* articleparams */, index, arrayref){
                     "--mask": "url('" + maskurl + "#section')"
                 },
                 "childNodes": (function(){
-                    // could definitely do a look ahead here and make this automatic
-                    // if the media type of the remote URL is photo, video, audio... switch to certain interface
                     switch(type){
                         case "text":
                             return [
@@ -279,13 +238,13 @@ module.exports = function(params /* articleparams */, index, arrayref){
                                 // render shape-outside for div.left and div.right
                             ]
                         case "embed":
-                            // if embedtag is webcam... 
-                            // iframe | media (img/video) | camera
+                            // if embedtag is webcam, use markup in templates/webcam.json
+                            // else it is img | video | iframe
+                            // later, I can probably check the url extension and choose this automatically, just have to choose webcam | media
                             return embedtag == "webcam" ? webcam : [{[embedtag]: {
                                 // autoloop and autoplay for video
                                 // "autoplay": "true",
                                 "loop": "true",
-                                // "allow":"camera;microphone", for webcam
                                 "src": embedurl
                             }}]
                         case "net":

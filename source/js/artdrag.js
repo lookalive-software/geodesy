@@ -7,19 +7,29 @@
 // input.dispatchEvent(new Event('input'))
 var root = document.querySelector('iframe')
 // let form = document.querySelector('form')
+var body = null
+root.addEventListener('load', () => {
+	body = root.contentDocument.body
+})
 
 var updatePos
+var focusedArticle
+
+// on mouse up, after recalculating the body, can scroll focusedarticle to view
 // get focused article?
 
 
 
 // extra settimeout because load fires when subreources are loaded, but I'm not convinced it waits til first paint
 root.addEventListener('load', () => {
-	let { body, documentElement } = root.contentDocument
-	console.log({body, documentElement})
+	// let { body, documentElement } = root.contentDocument
+	// console.log({body, documentElement})
 
 	body.addEventListener('mouseup', event => {
-	  if(updatePos) updatePos = undefined;
+	  if(updatePos){
+	  	recalcAll() // only recalulcate when an updatePos just existed
+	  	updatePos = undefined;
+	  }
 	  root.removeEventListener('mousemove', handleMove); // this listener gets added to root during a article on mousedown
 	})
 	body.childNodes.forEach(article => {
@@ -38,11 +48,10 @@ root.addEventListener('load', () => {
  *
  */
 function handleMove(event){
-	event.preventDefault()
 	// I don't remember why I was checking for event.buttons
 	// I guess as a stopback in case mousemove fires without me holding the mouse down.
 	if(event.buttons && updatePos){
-		event.preventDefault();
+		// event.preventDefault();
 		updatePos(event.clientX, event.clientY, event.shiftKey);
 	}
 	return false;
@@ -59,6 +68,11 @@ function handleMove(event){
 // }
 
 // so event.target is going ot be section, and all my cssvars on section.parentNode.style.cssVars
+// if I want to use getCSSVars on serverside, I can just add a getPropertyValue getter on the object prototype
+// Object.prototype.getPropertyValue(key){
+// 	return this[key]
+// }
+
 function getCSSVars(article){
 	return {
 		"xunit":   Number(article.style.getPropertyValue("--xunit")),
@@ -96,6 +110,8 @@ function createUpdatePos(clientX, clientY, article){
 	var props = getCSSVars(article)
 
   	return function(clientX, clientY, shift = false){
+  	// return function({clientX, clientY, shift, buttons}){
+  		// if(!buttons) destroyUpdatePos() // if no buttons, this function should've been destroy already
 		var movementX = clientX - theLastX
 		var movementY = -(clientY - theLastY)
 		// compare how far I am from thelastx, overwrite the lastX once
@@ -135,7 +151,6 @@ function createUpdatePos(clientX, clientY, article){
 	        } else {
 	        	dycent = totalycent
 	        }
-
 			article.style.setProperty("--xcent", dxcent.toFixed(2))
 			article.style.setProperty("--ycent", dycent.toFixed(2))
 		    form.querySelector(`[name="--xcent-${index}"]`).value = dxcent.toFixed(2)
@@ -147,29 +162,68 @@ function createUpdatePos(clientX, clientY, article){
 		form.querySelector(`[name="--ystep-${index}"]`).value = (props.ystep + dystep).toFixed(0)
 
 		// calcMag(article)
-		recalcAll(article)
+		// recalcAll(article)
 	}
 }
 
-function recalcAll(article){
-	let body = root.contentDocument.body
-	body.style.setProperty("--xmag", 0)	
-	body.style.setProperty("--ymag", 0)	
-	body.childNodes.forEach(art => calcMag(art))
+function recalcAll(){
+
+	// body.style.setProperty("--xmag", 0)	
+	// body.style.setProperty("--ymag", 0)	
+	// body.childNodes.forEach(art => calcMag(art))
+
+	let {xmag, ymag} = Array
+		.from(body.children)
+		.filter(article => article.getAttribute("type") != "net")
+		.reduce(reduceMagnitude, {xmag: 0, ymag: 0})
+
+	body.style.setProperty("--xmag", xmag)	
+	body.style.setProperty("--ymag", ymag)
+	// If I had my ctxify addons https://github.com/jazzyjackson/ctxify/blob/master/ctxify.browser.js
+	// Object.assign(body.props.style, {xmag, ymag})
 	// article.scrollIntoView()
 }
 
-// on screen change, apply the updatebbox 
+// could filture array first, querySelectorAll('article[type=embed], article[type=text])
+// could have a few functions that do the same 
+function reduceMagnitude({xmag, ymag}, article){
+	if(article.getAttribute("type") == "net"){
+		return {xmag, ymag} // skip nets
+	}
 
-// maybe with a debounce to start at 0 and recalculate all articles
+	let props = getCSSVars(article)
+  	let bboxtop = props.top
+        -   props.zoom
+        *   props.yunit
+        *   (props.ystep + props.ycent)
 
-// 
+    let bboxleft = props.left // shouldn't I multiply everything by zoom?
+        -   props.zoom
+        *   props.xunit
+        *   (props.xstep + props.xcent)
 
-// given an article, 
-// maybe recalculate all on zoom change?
+    return {
+    	xmag: Math.max(
+            xmag, 
+            Math.abs(bboxleft),
+            Math.abs(
+            	bboxleft
+                + props.width
+                * props.zoom
+            )
+        ),
+		ymag: Math.max(
+            ymag, 
+            Math.abs(bboxtop),
+            Math.abs(
+            	bboxtop
+                + props.height
+                * props.zoom
+            )
+        )
+    }
 
-// attach listener to the form, calcMag whenever position is changed
-
+}
 
 function calcMag(article){
 

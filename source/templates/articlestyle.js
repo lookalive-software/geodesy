@@ -119,7 +119,7 @@ module.exports = { "style": {
 		  * 1px
 	  	) calc(
 	  		50%
-	  		+ var(--height)
+	  		- var(--height)
 	  		* var(--ycent)
 	  		* var(--zoom)
 		  	* var(--zoomg)
@@ -136,7 +136,7 @@ module.exports = { "style": {
 	  	  * 1px
 	  	) calc(
 	  		50%
-	  		+ var(--height)
+	  		- var(--height)
 	  		* var(--ycent)
 	  		* var(--zoom)
 		  	* var(--zoomg)

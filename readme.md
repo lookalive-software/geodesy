@@ -72,3 +72,20 @@ TODO 2
 
 Branches grow within a particular subdivision of space, and even tho I only track changes, I can view any particular state by rewinding or fast forwarding, with very low bandwidth for seeing "what the next change is" -- mostly small messages updating position and style parameters, with the occasional url or text, a few kilobytes at most. View cross-sections of branching (creating a finer grid and skinnier twigs if necessary, fractally, infinitely, as much space as you need)
 
+TODO 3
+
+
+
+clone and pop depend on focus, so so does upone and downone, commands which swaps position with one higher or one lower.
+See if you can hide the up button on the first child and hide the down button on the last child, so the commands can't be made when they don't make sense. Or just have it swap positions with itself. 
+
+up and down for each of the layers
+
+focus=true shows the minifieldset of art=(title), lock(bool), vis(bool) so I can just check and uncheck these 2 states
+
+And these should become attributes of the article, 
+article[lock=true] -> pointer-events: none
+article[vis=false] -> display: none
+
+(so for bindframe, input name changes for lock and vis should set attributes on the article via js instead of reloading)
+(but when loaded, these attributes will already be in place from the formstate)

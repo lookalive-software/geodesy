@@ -29,7 +29,11 @@ function focusArticle(articleid /* numberish */){
         .body
         .children[articleid]
         .firstChild
-        .scrollIntoView()
+        .scrollIntoView({
+            // behavior: "smooth",
+            block: "center",
+            inline: "center"
+        })
 }
 
 // first thing
@@ -50,14 +54,15 @@ form.addEventListener('submit', event => {
     console.log("SUBMIT", event)
     // event.submitter was added to chrome in version 81
     // not available in safari or edge, so skip, will just have to do a hard reload
-    if(!event.submitter) return null
+    if(!event.submitter) return null // or do I return true so that submit occurs
     switch(event.submitter.name){
+        // triggered by the paint / move "tabs" which are actually submit buttons with name mode and value (paint|move)
         case "mode":
             event.preventDefault()
             form.setAttribute('mode', event.submitter.value ) // switch modes
             hiddenmode.setAttribute('value',  event.submitter.value) // set value 
             return false // to ignore form submission 
-        // 
+        // a defocus submitter 
         case "defocus":
             event.preventDefault()
             // figure out which radio is now checked
@@ -65,9 +70,11 @@ form.addEventListener('submit', event => {
             // newfocus better be a number !
 
             form.setAttribute("focus", newfocus) // 
+            // hiddenfocus.value = newfocus
             hiddenfocus.setAttribute("value", newfocus) // sets the value on the hidden form that gets submitted
+
             // actually why do I have a hiddenfocus? If the server builds the radiobuttons and checks one, isn't that my focus that gets submitted?
-            focusArticle(newfocus)
+            focusArticle(newfocus) // only if I'm not a net do I scrollintoview and update location.hash
             // going to run through this twice, once for direct descendents from a menu
             // use newfocus to set location.hash...
             // set location hash on target? hash on form highlights the menu with id=3, 
@@ -81,9 +88,19 @@ form.addEventListener('submit', event => {
 })
 
 document.querySelectorAll('input, select, textarea').forEach(input => {
+    // things that need to happen after an update
+    // so this is programmatically triggered? So I don't need recalc 
+    // I'm calling "click" on the radio buttons, that triggers a change
+    // but setting the value like I do on drag, does not fire the change listener
+    // so I recalcAll on mouseup, or when I interact with the form
     input.addEventListener('change', event => {
         console.log("CHANGE", event.target.name)
+        if(/--((x|y)cent|(x|y)step)/.test(event.target.name)){
+            recalcAll()
+        }
+        // if zoomg changes I should refocus on
     })
+    // things that need to 
     input.addEventListener('input', event => {
         let key = event.target.name
         // nope this doesn't let me catch my --zoomg, which doesn't have the param child #, it's global.
@@ -91,12 +108,12 @@ document.querySelectorAll('input, select, textarea').forEach(input => {
         let [varname] = key.match(/([-]{0,2}\w+)/) || []
         let [index] = key.match(/(?<=-)\d+$/) || []
 
-        console.log("VARNAME", varname)
-        console.log("index", index)
+        // console.log("VARNAME", varname)
+        // console.log("index", index)
         // console.log(key, varname, event.target.value, index)
         // check if event.target.name ends in a digit
         // then instead of writing to the body, write the style vars directly to iframe.contentDocument.children[index].style.setProperty(prefix, value)
-        if(varname.indexOf('--') === 0 && index){
+        if(index && varname.indexOf('--') === 0){
             //todo check if contentdocument is null
             // this first child needs to be updated to '
             frame

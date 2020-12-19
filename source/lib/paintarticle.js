@@ -44,6 +44,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
         motif,
         shells,
         type, // embed | text | net
+        ratio,
         // radius,
         strapwork,
         content,
@@ -58,6 +59,8 @@ module.exports = function(params /* articleparams */, index, arrayref){
         art, // article title
     } = params
 
+    // ratio works on wallpapers too np
+
     // if we're in embed or text mode, we're going to unionize the polygons
     let unionize = ["embed", "text"].includes(type)
     let wallpaper = !unionize // if its union'd, it's not a wallpaper
@@ -66,14 +69,17 @@ module.exports = function(params /* articleparams */, index, arrayref){
     // would be better if cssvars had a getter which tried to coerce isNaN(Number()) -> return number
     // would have to be a proxy to allow getting any attribute
     // so far the only time I retrieve values from cssvars is I assume they're numbers
-    let cssvars = Object.fromEntries(Object.entries(params).filter(([key]) => ~key.indexOf('--')))
+    let cssvars = Object.fromEntries(
+        Object.entries(params).filter(
+            ([key]) => ~key.indexOf('--')
+        )
+    )
     let lattice = cachelattice({motif, shells})
     // transform bitmask:string to a boolmask:Boolean[]
     // doesnt support e notation
 
     let boolmask = BigInt(bitmask).toString(2).split('').map(Number).map(Boolean).reverse() // convert 1 and 0 strings into true and false values
     // let boolmask = Array.from({length: bitmask - 1}, e => false).concat(true)
-
 
     let flatgeometry = lattice.shells.flat()
     let maskedgeometry = (maskmode === 'nested')
@@ -94,7 +100,28 @@ module.exports = function(params /* articleparams */, index, arrayref){
     ))
     // console.log("MASKPOLYGON", maskpolygons.features.map(e => e.geometry.coordinates))
     let articlebbox = turf.bbox(allpolygons) // returns [minx, miny, maxx, maxy] of bounding box
-    let sectionbbox = turf.bbox(maskpolygons)
+    // let sectionbbox = turf.bbox(maskpolygons)
+
+    // minnorm is the minimal boundingbox, maxnormal is the square that contains the circle that enscribes the viewbox
+    let minnormal = Math.max(...articlebbox.map(Math.abs))
+    let maxnormal = Math.SQRT2 * minnormal // becomes viewbox
+
+    // for ratiomasking, I apply the ratio to minnormal to one dimension or the other
+    // so I draw all the polygons, but flat/maskedgeometry are {m/x/y/spin/pts}
+    // so I can filter this list based on x or y
+    // this is all before multiplying by unit radius (px)
+    // so I've got my minnormal, I can multiply it by the inverse of the absolute value...
+    // then filter either the xs or ys
+    // if number is negative, ratio throws out any points based on x position
+    // if number is positive, throw out points outside +- mag 
+    ratio = Number(ratio) // really should become a number based on type definition
+    maskedgeometry = maskedgeometry.filter(({x,y}) => {
+        if(ratio <= 0){
+            return Math.abs(x) < (minnormal * (ratio + 1))
+        } else {
+            return Math.abs(y) < (minnormal * (1 - ratio))
+        }
+    })
 
     let [xunit, yunit] = lattice.meta.wallpaper
 
@@ -140,17 +167,24 @@ module.exports = function(params /* articleparams */, index, arrayref){
     // xunit/y is minimum wallpaper size, whose value is one quadrant of a four quadrant euclidian plane
     // so I have to multiple by 2 to 
     // x/ywindow is the number of steps to multiply by to increase the unitcell
-    let [minx, miny, width, height] = bbox2topleft(sectionbbox)
+    // get the largest magnitude dimension and use that as my radius
+    // my viewbox that enscribes a circle of this radius is Sqrt[2] * radius
+
+    // let [minx, miny, width, height] = bbox2topleft(sectionbbox)
     let viewbox = (wallpaper ? [
         radius * (xunit * xwindow * -1), // min x
         radius * (yunit * ywindow * -1), // min y
         radius * (xunit * xwindow * 2),
         radius * (yunit * ywindow * 2)
     ] : [
-        (radius * minx) - (strapwork / 2), // farther left
-        (radius * miny) - (strapwork / 2), // farther up
-        (radius * width) + (strapwork / 1), // wider // divide by 1 coerces string -> Number
-        (radius * height) + (strapwork / 1) // taller
+        radius * maxnormal * -1 - (strapwork / 2),
+        radius * maxnormal * -1 - (strapwork / 2),
+        radius * maxnormal * 2 + (strapwork / 1),
+        radius * maxnormal * 2 + (strapwork / 1)
+        // (radius * minx) - (strapwork / 2), // farther left
+        // (radius * miny) - (strapwork / 2), // farther up
+        // (radius * width) + (strapwork / 1), // wider // divide by 1 coerces string -> Number
+        // (radius * height) + (strapwork / 1) // taller
     ]).map(shorten)
     // after calculating the viewbox of each wallpaper and medallion
     // I can set the values of left top width height, but this 
@@ -167,6 +201,11 @@ module.exports = function(params /* articleparams */, index, arrayref){
     //  what's larger: leftmost or leftmost + width
     //  what's larger: topmost or topmost + height
     // copies scheme from article style to find left and top
+
+    // this doesn't handle rotation very well
+    // would have to calculate the new width and height after rotation
+    // maybe easier to make a bbox that's a circle so its the same dimension whatever the rotation
+    // pythagorous of top and left = radius... 
     console.log(cssvars)
     let bboxtop = N(cssvars["--top"])
         -   N(cssvars["--zoom"])
@@ -174,7 +213,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
         *  (N(cssvars["--ystep"]) + N(cssvars["--ycent"]))
 
     let bboxleft = N(cssvars["--left"])
-        + N(cssvars["--zoom"])
+        - N(cssvars["--zoom"])
         * N(cssvars["--xunit"])
         * N(N(cssvars["--xstep"]) + N(cssvars["--xcent"]))
 

@@ -31,7 +31,7 @@ module.exports = { "style": {
 	},
 	// offset the medallion so its center lies on the articles origin 
 	// this gets overwritten for NET articles
-	"section, article:after": {
+	"section, article:after, article:before": {
 		"position": "absolute",
 		"overflow": "hidden",
 		"top": `calc(
@@ -88,6 +88,17 @@ module.exports = { "style": {
 		"background": "var(--strokecolor)",
 		"opacity": "var(--strokeopacity)",
 	},
+	"article[type=\"text\"]:before, article[type=\"embed\"]:before": {
+		// reset mask image to none (none vs unset?)
+		"content": '""',
+		"mask-image": "none",
+		"-webkit-mask-image": "none",
+		"border": "10px solid cornflowerblue",
+		"filter": "blur(5px)",
+		"border-radius": "100%",
+		"clip-path": "circle()",
+		"box-sizing": "border-box"
+	},
 
 	// for NET (wallpaper) articles, fill the screen
 	"article[type=\"net\"]": {
@@ -119,11 +130,11 @@ module.exports = { "style": {
 		  * 1px
 	  	) calc(
 	  		50%
-	  		- var(--height)
-	  		* var(--ycent)
-	  		* var(--zoom)
-		  	* var(--zoomg)
-		  	* 1px
+  		  - var(--height)
+  		  * var(--ycent)
+  		  * var(--zoom)
+	  	  * var(--zoomg)
+	  	  * 1px
   		)`,
 		// for chrome:
 		"-webkit-mask-size": "calc(1px * var(--width) * var(--zoom) * var(--zoomg))",
@@ -132,15 +143,15 @@ module.exports = { "style": {
 		  + var(--width)
 		  * var(--xcent)
 		  * var(--zoom)
-	  	  * var(--zoomg)
-	  	  * 1px
+		  * var(--zoomg)
+		  * 1px
 	  	) calc(
 	  		50%
-	  		- var(--height)
-	  		* var(--ycent)
-	  		* var(--zoom)
-		  	* var(--zoomg)
-		  	* 1px
+  		  - var(--height)
+  		  * var(--ycent)
+  		  * var(--zoom)
+	  	  * var(--zoomg)
+	  	  * 1px
   		)`,
 	},
 	// for TEXT articles
@@ -164,12 +175,12 @@ module.exports = { "style": {
 		"font-variation-settings": `"MONO" var(--MONO), "CASL" var(--CASL), "wght" var(--wght), "slnt" var(--slnt), "CRSV" 0.5`,
 	},
 
-	// for EMBED articles
-	"[type=\"embed\"] section": {
+	// for EMBED articles // would be better if this reacts to an attribute added by form.js, so that everything works in /art/ mode
+	"[type=\"embed\"] section > *, [type=\"text\"] section > *": {
 		"pointer-events": "none",
+		"user-select": "none"
 	},
 	"[type=\"embed\"] section > *": {
-		"pointer-events": "all",
 		"opacity": "var(--fillopacity)",
 		"min-width": "100%", // min width & height to allow img to scale without distortion
 		"min-height": "100%",

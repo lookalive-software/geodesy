@@ -7,7 +7,7 @@ module.exports = {
             "overflow":"hidden"
         },
         "iframe": {
-            "width":"100%",
+            "width":"calc(100% - 256px)",
             "height":"100%",
             "position":"absolute"
         },

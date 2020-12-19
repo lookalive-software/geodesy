@@ -170,6 +170,12 @@ module.exports = function(paramarray, options){
                                     }}
                                     // draw the bitmask in binary somehow -- flow content with width / 16 so they wrap?
                                 ]},
+                                {"label": [
+                                    "ratio", 
+                                    {"input":{
+                                        "name":`ratio-${n}`,"type":"range","min":"-0.9","max": "0.9","step":"0.1","value": param["ratio"]
+                                    }}
+                                ]},
                                 {"label": [ // how do I add checked to the appropriate radio? maybe don't have radios....
                                     {"input": {"type":"radio", "name":`maskmode-${n}`, "value":"nested", "id":`nested-${n}`, [param.maskmode == "nested" ? "checked" : ""]: ""}},
                                     {[`label for="nested-${n}"`]:["orbital"]},

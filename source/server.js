@@ -149,6 +149,7 @@ http.createServer((req, res) => {
                         "--ymag": paramarray["ymag"],
                         "width": `calc(var(--xmag) * 2px * var(--zoomg))`,
                         "height": `calc(var(--ymag) * 2px * var(--zoomg))`,
+                        "transition": "width 0.1s, height 0.1s"
                     },
                     // width, height, top, left...
                     "childNodes": paintedarray

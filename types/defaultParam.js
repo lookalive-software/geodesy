@@ -9,6 +9,7 @@ module.exports = Object.freeze({
         "bitmask": 0, // some sum of binary vector, no max. must be int I guess.
         "maskmode": "flat", // || "nested"
         "linejoin": "round", // || "miter" | "bevel"
+        "ratio": 0,
         "--fillopacity": 1, // 0 1
         "--fillcolor": "#ffffff",
         "--strokeopacity": 1, // 0 1

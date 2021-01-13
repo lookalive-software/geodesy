@@ -22,54 +22,47 @@ module.exports = { "style": {
     // position article at 0,0 center of body, offset by combination of step/cent/unitcell/zoom
     // position of section is always relative to 0,0 before scaling and rotation
     // 
-	"article": {
-		"position": "absolute",
-		"left": "50%",
-		"top": "50%",
-		"filter": "blur(calc(var(--blur) * 1px))",
-		"transform": "scale(var(--zoomg))", // gets overwritten with 'none' for [type=net], zoomg is applied to mask size 
-	},
+
 	// offset the medallion so its center lies on the articles origin 
 	// this gets overwritten for NET articles
-	"section, article:after, article:before": {
+	"section, article:after": {
 		"position": "absolute",
-		"overflow": "hidden",
-		"top": `calc(
-		   	1px
-		  *	var(--top)
-		  - 1px
-	  	  * var(--zoom)
-	  	  * var(--yunit)
-		  * calc(
-		  	  var(--ystep)
-		  	+ var(--ycent)
-		  	)
-	  	)`,
-		"left": `calc(
-			1px
-		  * var(--left)
-		  + 1px
-	  	  * var(--zoom)
-  	  	  * var(--xunit)
-		  * calc(
-		  	  var(--xstep)
-		  	+ var(--xcent)
-  	  		)
-	  	)`,
-		"width": "var(--width)",
-		"height": "var(--height)",
-
+		"width": "100%",
+		"height": "100%",
 		"mask-image": "var(--mask)",
 		"mask-position": "center",
 		// for chrome:
 	    "-webkit-mask-image": "var(--mask)",
 	    "-webkit-mask-position": "center",
 		"transform": `
-			scale(var(--zoom))
 			rotate(calc(1deg * var(--spin)))
 		`
 	},
-
+	"article": {
+		"--totalzoom": "calc(var(--zoom) * var(--zoomg))",
+		"width": "var(--width)",
+		"height": "var(--height)",
+		"position": "absolute",
+		"top": "calc(50% + (var(--top) * 1px))",
+		"left": "calc(50% + (var(--left) * 1px))",
+		"overflow": "hidden",
+		"filter": "blur(calc(var(--blur) * 1px))",
+		"transform": `
+			translateX(calc(
+				var(--xunit)
+			  * (var(--xstep) + var(--xcent))
+			  * var(--totalzoom)
+			  * 1px
+			))
+			translateY(calc(
+				var(--yunit)
+			  * (var(--ystep) + var(--ycent))
+			  * var(--totalzoom)
+			  * -1px
+			))
+			scale(var(--totalzoom))
+		`
+	},
 	// to paint the background of sections
 	"section:before": {
 		"background": "var(--fillcolor)",
@@ -88,27 +81,39 @@ module.exports = { "style": {
 		"background": "var(--strokecolor)",
 		"opacity": "var(--strokeopacity)",
 	},
-	"article[type=\"text\"]:before, article[type=\"embed\"]:before": {
-		// reset mask image to none (none vs unset?)
-		"content": '""',
-		"mask-image": "none",
-		"-webkit-mask-image": "none",
-		"border": "10px solid cornflowerblue",
-		"filter": "blur(5px)",
-		"border-radius": "100%",
-		"clip-path": "circle()",
-		"box-sizing": "border-box"
+	"article:focus": {
+		"outline": "none",
+		"box-shadow": "none",
 	},
-
-	// for NET (wallpaper) articles, fill the screen
-	"article[type=\"net\"]": {
-		"left": "0",
-		"top": "0",
+	"article[type=\"text\"], article[type=\"embed\"]": {
+		// for text and embed, I use clippath circle so that mouse events only reach children within the circle
+		"clip-path": "circle()" // fills the whole square evenly
+	},
+	"article > svg": {
+		"display": "none"
+	},
+	"article[type=\"text\"]:focus > div, article[type=\"embed\"]:focus > div": {
+		"display": "block",
+		"position": "absolute",
+		"background-size": "contain",
+		"pointer-events": "none",
 		"width": "100%",
 		"height": "100%",
-		"overflow": "hidden",
-		// disable zoom and rotate transforms to the article
-		// zoom is applied to the mask and rotation is applied to the net:section so that I can rotate the inner body
+		"animation": "spin 30s linear infinite",
+	},
+	"@keyframes spin": {
+		"from": {
+			"transform": "rotate(0deg)"
+		},
+		"to": {
+			"transform": "rotate(359deg)"
+		}
+	},
+	"article[type=\"net\"]": {
+		"width": "100%",
+		"height": "100%",
+		"left": "0",
+		"top": "0",
 		"transform": "none"
 	},
 	"[type=\"net\"] section, [type=\"net\"]:after":{

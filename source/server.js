@@ -99,12 +99,18 @@ http.createServer((req, res) => {
                 {"head": [
                     {"title":["Geodesy"]}, // could be paramarray[options['focus']]['title'] // need to update it in bindframe.js on defocus
                     {"meta":{"charset":"UTF-8"}},
+                    {"script": {"src": "/static/node_modules/@lookalive/elementary/elementary.js"}},
+
                     favicon, // maybe later favicon can take a url and embed it base64...
                     globalstyle,
                     formstyle
                 ]},
                 {"body": [
-                    {"iframe": {"name": "frame", "frameborder": "0"}},
+                    {"iframe": {
+                        "name": "frame",
+                        "allow": "camera;microphone",
+                        "frameborder": "0"}
+                    },
                     // maybe update the form attripbute  
                     form(paramarray, options),
                     {"script": {"src": "/static/source/js/bindframe.js"}},

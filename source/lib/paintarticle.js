@@ -2,6 +2,7 @@ const turf = require('@turf/turf')
 const {cachelattice} = require('./cachelattice.js')
 const {paintmask} = require('./paintmask')
 const {shorten} = require('./mathutils')
+const { elementary } = require('@lookalive/elementary')
 
 const webcam = require('../templates/webcam.json')
 const N = Number // for explicit type casting
@@ -105,6 +106,12 @@ module.exports = function(params /* articleparams */, index, arrayref){
     // minnorm is the minimal boundingbox, maxnormal is the square that contains the circle that enscribes the viewbox
     let minnormal = Math.max(...articlebbox.map(Math.abs))
     let maxnormal = Math.SQRT2 * minnormal // becomes viewbox
+    // TODO
+    // what would be useful, instead of finding the corner of the bbox, which is gaurenteed to contain the polygons but probably has some margin
+    // so to find the actual min norm, I would have to ask for the norm of each point and use the max of that
+    // the radius drawn by that would fit the polygon group much tighter
+    // far future: draw the ellipse that fits -- I can use ratio as a loose bounding-ellipse
+
 
     // for ratiomasking, I apply the ratio to minnormal to one dimension or the other
     // so I draw all the polygons, but flat/maskedgeometry are {m/x/y/spin/pts}
@@ -249,6 +256,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
     cssvars['--mask'] = "url('" + maskurl + "#strapwork')"
 
     return {"article": {
+        "tabindex": "0",
         "type": type,
         "style": cssvars, // mostly vars 
         "childNodes": [ // section gets psuedo elements to place float shapes in the vicinity of flowed text inside section
@@ -293,9 +301,52 @@ module.exports = function(params /* articleparams */, index, arrayref){
                             console.warn("received unrecognized mode", mode)
                     }
                 })()
-            }}
+            }},
+            {"div": {"style": {
+                "background-image": writeSVGbase64(art || ("article " + index)),
+            }}},
             // and then a list of metasection or map areas that allow clicking a specific region of the geodesy
         ]
     }}
     // and so, whether wallpaper or window, the stylevars are set to the article, so they can be expressed by both chidlren: psuedo and quasi
+}
+
+// first thing, 
+function writeSVGbase64(title){
+    return "url('data:image/svg+xml;base64," + Buffer.from(elementary({"svg": {
+            "xmlns":"http://www.w3.org/2000/svg",
+            "width": "100",
+            "height": "100",
+            "viewbox": "0 0 100 100",
+            "childNodes": [
+                {"defs": [{"path": {
+                    "id": "ring",
+                    // equivelant to cx -50 cy 50 r 50
+                    "d": "M 90,50 A 40,40 0 0 1 50,90 40,40 0 0 1 10,50 40,40 0 0 1 50,10 40,40 0 0 1 90,50 Z",
+                }}]},
+                {"style": {
+                    "text": {
+                        "fill": "white",
+                        "stroke": "black",
+                        "font-family": "monospace",
+                        "font-size": "8px",
+                        "stroke-width": "0.3px"
+                    }
+                }},
+                {"text": [
+                    {"textPath": {
+                        "href": "#ring",
+                        "childNodes": [
+                            fillduplicate(title, 64)
+                        ]
+                    }}
+                ]}
+            ]
+        }})).toString('base64') + "')"
+}
+
+function fillduplicate(string, len){
+    return len < string.length
+        ? string.slice(0, len)
+        : string + ' ' + fillduplicate(string, --len - string.length)
 }

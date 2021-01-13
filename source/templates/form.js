@@ -78,7 +78,7 @@ module.exports = function(paramarray, options){
             // one 'focus' button
             {"menu": [
                 {"noscript": [{"input": {"type":"submit", "value": "update"}}]}, // noscript fallback to manually submit the form
-                {"fieldset": [{"label": [
+                {"fieldset": [{"div":[
                     {"input": {
                         "type":"submit",
                         "name": "cmd",

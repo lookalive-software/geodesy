@@ -24,19 +24,7 @@ exports.paintmask = ({viewbox, uniongeometry, atomgeometry, strapwork, radius, p
         // viewbox,
         // strapwork, 
         // radius
-    })).digest('hex').slice(-16)
-
-    // viewbox is minx miny width height
-
-    // flip the polarity from to describe the pos
-    // viewbox[0] = -viewbox[0]
-    // viewbox[1] = -viewbox[1] 
-    // 
-    // trick is, in order to reveal one mask at a time, and also be able to adjust view...
-
-    // offset defaults to 0, just used to shift polygons over to the left, by one half width...
-
-    // 
+    })).digest('hex').slice(-16) // 16 is length of bitmask, could be shorter and still avoid collisions. 16 is pretty safe tho.
 
     let paintpolygon = pts => (
         {"polygon": {

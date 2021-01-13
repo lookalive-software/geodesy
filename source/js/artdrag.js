@@ -7,54 +7,40 @@
 // input.dispatchEvent(new Event('input'))
 var root = document.querySelector('iframe')
 // let form = document.querySelector('form')
-var body = null
-root.addEventListener('load', () => {
-	body = root.contentDocument.body
-})
-
-var updatePos
-var focusedArticle
+var body
+var update
 
 // on mouse up, after recalculating the body, can scroll focusedarticle to view
-// get focused article?
+// get focused article? set focusedArticle on createUpdatePos
 
+
+// two conditions for destroying 
+
+// I push an update to the form, but I need a listener on the form as well, whenever an article is moved, recalc the body and scrollintoview
 
 
 // extra settimeout because load fires when subreources are loaded, but I'm not convinced it waits til first paint
 root.addEventListener('load', () => {
-	// let { body, documentElement } = root.contentDocument
-	// console.log({body, documentElement})
-
-	body.addEventListener('mouseup', event => {
-	  if(updatePos){
-	  	recalcAll() // only recalulcate when an updatePos just existed
-	  	updatePos = undefined;
-	  }
-	  root.removeEventListener('mousemove', handleMove); // this listener gets added to root during a article on mousedown
-	})
+	body = root.contentDocument.body // should exist by now!
+	body.addEventListener('mouseup', destroyUpdate)
 	body.childNodes.forEach(article => {
-		console.log("ARTICLE", article)
-		article.firstChild.addEventListener('mousedown', event => {
-			console.log("mousedown on article", article)
-			updatePos = createUpdatePos(event.clientX, event.clientY, article)
-			body.addEventListener('mousemove', handleMove)
-		})
+		// I'm going to make the article the this 		
+		article.firstChild.addEventListener('mousedown', createUpdate.bind(article))
 	})
 
 	// first bug, embed doesnt work because pointer events none -- otherwise iframe doesn't interace. 
 })
 
 /* 
- *
+ * if mouseup happens outside the window (common when dragging over the edge), I have to catch it next time handlemove 
  */
 function handleMove(event){
-	// I don't remember why I was checking for event.buttons
-	// I guess as a stopback in case mousemove fires without me holding the mouse down.
-	if(event.buttons && updatePos){
-		// event.preventDefault();
-		updatePos(event.clientX, event.clientY, event.shiftKey);
+	if(event.buttons){
+		update(event);
+	} else {
+		destroyUpdate()
 	}
-	return false;
+	return false
 }
 
 //takes a node, returns a node.
@@ -89,31 +75,49 @@ function getCSSVars(article){
 	}
 }
 
-function destroyUpdatePos(){
-	body.removeEventListener('mousemove', updatepos)
+function destroyUpdate(){
+	if(!update){ return console.error("DestoryUpdate was called twice?")}
+	body.removeEventListener('mousemove', handleMove)
+	update = null
+	recalcAll()
 }
 
-function createUpdatePos(clientX, clientY, article){
+// 'this' is the article
+function createUpdate({clientX, clientY}){
+	// I'm trying to avoid calling a listener on every mousemove, so I'm making sure to add and remove the persistent function handleMove
+	// the function 'update' may be overwritten at any time, so could be a source of listener leaks where I just keep attaching new listeners
+	// instead there is only ever one mousemove handler at a time, and only one update handler at a time
+	// the handler and the update should be nullified either by mousemove with no buttons, or a mouseup on the document.
+	// at that point, the recalc will be called.
+	// before any mousedown event that creates a new update function, 
+	if(update) return console.error("an update was overwritten without first being destroyed")
+	console.log("CREATING UPDATE", this)
+	// adding and removing 
+	body.addEventListener('mousemove', handleMove)
+
 	//this is a function creator. When a mouse/touchdown event occurs, the initial position 
 	//is enclosed in a function, those variables are updated on mousemove and will persist
 	//as long as the function exists. On touch/mouseup events, the function is destroyed (the variable it was assigned to is reassigned null)
 	var theLastX = clientX;
 	var theLastY = clientY;
+	// could also ask, indexOf
+	let focused = this.firstChild.id // this becomes global so that destroyUpdatePos knows who to scrollinto after recalculating...
 
-  	let index = article.firstChild.id
   	// click focus on whatever radio button is up there... it won't reload the page, no problem if already selected
-  	form.querySelector(`[type="radio"][name="focus"][id="${index}"]`).click() // surely it will exist, right?
+  	form.querySelector(`[type="radio"][name="focus"][id="${focused}"]`).click() // surely it will exist, right?
+  	// clicking this scrolls into view too, 
 
+	var globalzoom = body.style.getPropertyValue("--zoomg")
+	var props = getCSSVars(this)
 
-	var globalzoom = root.contentDocument.body.style.getPropertyValue("--zoomg")
+	// this should continue pointing at the current context
+	// global update is called on mousemove
 
-	var props = getCSSVars(article)
+  	update = ({clientX, clientY, shiftKey}) => {
 
-  	return function(clientX, clientY, shift = false){
-  	// return function({clientX, clientY, shift, buttons}){
-  		// if(!buttons) destroyUpdatePos() // if no buttons, this function should've been destroy already
 		var movementX = clientX - theLastX
 		var movementY = -(clientY - theLastY)
+
 		// compare how far I am from thelastx, overwrite the lastX once
 		// I'm measuring how far I've moved since I first clicked, and applying that distance to the position of the article when it was first clicked
 		let xunitadj = props.xunit * props.zoom * globalzoom
@@ -127,7 +131,7 @@ function createUpdatePos(clientX, clientY, article){
 		let dxcent = (movementX % xunitadj) / xunitadj
 		let dycent = (movementY % yunitadj) / yunitadj
 
-	  	if(shift){
+	  	if(shiftKey){
 	      	// will be 0 or 1 if current xcent plus change in xcent is greater than one
 	        let totalxcent = dxcent + props.xcent
 	        let totalycent = dycent + props.ycent
@@ -151,26 +155,23 @@ function createUpdatePos(clientX, clientY, article){
 	        } else {
 	        	dycent = totalycent
 	        }
-			article.style.setProperty("--xcent", dxcent.toFixed(2))
-			article.style.setProperty("--ycent", dycent.toFixed(2))
-		    form.querySelector(`[name="--xcent-${index}"]`).value = dxcent.toFixed(2)
-		    form.querySelector(`[name="--ycent-${index}"]`).value = dycent.toFixed(2)
+			this.style.setProperty("--xcent", dxcent.toFixed(2))
+			this.style.setProperty("--ycent", dycent.toFixed(2))
+		    form.querySelector(`[name="--xcent-${focused}"]`).value = dxcent.toFixed(2)
+		    form.querySelector(`[name="--ycent-${focused}"]`).value = dycent.toFixed(2)
 	  	}
-		article.style.setProperty("--xstep", (props.xstep + dxstep).toFixed(0))
-		article.style.setProperty("--ystep", (props.ystep + dystep).toFixed(0))
-		form.querySelector(`[name="--xstep-${index}"]`).value = (props.xstep + dxstep).toFixed(0)
-		form.querySelector(`[name="--ystep-${index}"]`).value = (props.ystep + dystep).toFixed(0)
-
-		// calcMag(article)
-		// recalcAll(article)
+		this.style.setProperty("--xstep", (props.xstep + dxstep).toFixed(0))
+		this.style.setProperty("--ystep", (props.ystep + dystep).toFixed(0))
+		form.querySelector(`[name="--xstep-${focused}"]`).value = (props.xstep + dxstep).toFixed(0)
+		form.querySelector(`[name="--ystep-${focused}"]`).value = (props.ystep + dystep).toFixed(0)
 	}
 }
 
 function recalcAll(){
-
-	// body.style.setProperty("--xmag", 0)	
-	// body.style.setProperty("--ymag", 0)	
-	// body.childNodes.forEach(art => calcMag(art))
+	// should also call when xystep / xycent on input...
+	// this also relies on the focused var to stay correct...
+	// well it gets updated whenever mousedown on a section, and then forces the form to reflect that
+	// but what about when I change the form? when I'm moving an element by form, and calling recalcAll, I need to know its going to scroll into view based on the var "focused"
 
 	let {xmag, ymag} = Array
 		.from(body.children)
@@ -181,7 +182,15 @@ function recalcAll(){
 	body.style.setProperty("--ymag", ymag)
 	// If I had my ctxify addons https://github.com/jazzyjackson/ctxify/blob/master/ctxify.browser.js
 	// Object.assign(body.props.style, {xmag, ymag})
-	// article.scrollIntoView()
+	// hiddenfocus should have been updated 
+	console.log("scrolling to focused item", hiddenfocus.value)
+	setTimeout(()=>{
+		body
+			.children[hiddenfocus.value]
+			.firstChild
+	        .scrollIntoView()
+	}, 110) // 100ms is also my transition for body width, so wait for the body to expand before scrolling.
+
 }
 
 // could filture array first, querySelectorAll('article[type=embed], article[type=text])
@@ -192,6 +201,8 @@ function reduceMagnitude({xmag, ymag}, article){
 	}
 
 	let props = getCSSVars(article)
+  	// let bboxtop = (props.top - (props.yunit * (props.ystep + props.ycent))) * props.zoom
+	// let bboxleft = (props.left + (props.xunit * (props.xstep + props.xcent))) * props.zoom
   	let bboxtop = props.top
         -   props.zoom
         *   props.yunit
@@ -204,73 +215,15 @@ function reduceMagnitude({xmag, ymag}, article){
 
     return {
     	xmag: Math.max(
-            xmag, 
+            xmag || 0, 
             Math.abs(bboxleft),
-            Math.abs(
-            	bboxleft
-                + props.width
-                * props.zoom
-            )
+            Math.abs(bboxleft + (props.width * props.zoom))
         ),
 		ymag: Math.max(
-            ymag, 
+            ymag || 0, 
             Math.abs(bboxtop),
-            Math.abs(
-            	bboxtop
-                + props.height
-                * props.zoom
-            )
+            Math.abs(bboxtop + (props.height * props.zoom))
         )
     }
 
-}
-
-function calcMag(article){
-
-	// magnitude only cares about embeds and texts
-	if(article.getAttribute("type") == "net") return null
-
-	let body = root.contentDocument.body
-
-	let props = getCSSVars(article)
-	var thismagx = Number(body.style.getPropertyValue("--xmag"))
-	var thismagy = Number(body.style.getPropertyValue("--ymag"))
-	
-	// set xmag and ymag
-
-  	let bboxtop = props.top
-        -   props.zoom
-        *   props.yunit
-        *   (props.ystep + props.ycent)
-
-    let bboxleft = props.left
-        -   props.zoom
-        *   props.xunit
-        *   (props.xstep + props.xcent)
-
-	body.style.setProperty(
-		"--xmag", 
-		Math.max(
-            thismagx || null, 
-            Math.abs(bboxleft),
-            Math.abs(
-            	bboxleft
-                + props.width
-                * props.zoom
-            )
-        )
-	)
-
-	body.style.setProperty(
-    	"--ymag",
-    	Math.max(
-            thismagy || null, 
-            Math.abs(bboxtop),
-            Math.abs(
-            	bboxtop
-                + props.height
-                * props.zoom
-            )
-        )
-    )
 }

@@ -19,7 +19,6 @@ let hiddenfocus = document.querySelector('input[type="hidden"][name="focus"]')
 
 form.submit()
 
-// first thing, 
 
 function focusArticle(articleid /* numberish */){
     location.hash = articleid // updates url
@@ -29,11 +28,7 @@ function focusArticle(articleid /* numberish */){
         .body
         .children[articleid]
         .firstChild
-        .scrollIntoView({
-            // behavior: "smooth",
-            block: "center",
-            inline: "center"
-        })
+        .scrollIntoView()
 }
 
 // first thing

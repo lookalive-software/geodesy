@@ -159,7 +159,10 @@ function createUpdate({clientX, clientY}){
 			this.style.setProperty("--ycent", dycent.toFixed(2))
 		    form.querySelector(`[name="--xcent-${focused}"]`).value = dxcent.toFixed(2)
 		    form.querySelector(`[name="--ycent-${focused}"]`).value = dycent.toFixed(2)
-	  	}
+		  }
+		// only update the step if article type is not net
+		// could maybe use a couple functions 'update step' 'update cent'
+		if(this.getAttribute('type') == 'net') return null
 		this.style.setProperty("--xstep", (props.xstep + dxstep).toFixed(0))
 		this.style.setProperty("--ystep", (props.ystep + dystep).toFixed(0))
 		form.querySelector(`[name="--xstep-${focused}"]`).value = (props.xstep + dxstep).toFixed(0)

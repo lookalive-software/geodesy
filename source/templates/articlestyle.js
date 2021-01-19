@@ -90,16 +90,20 @@ module.exports = { "style": {
 		"clip-path": "circle()" // fills the whole square evenly
 	},
 	"article > svg": {
-		"display": "none"
-	},
-	"article[type=\"text\"]:focus > div, article[type=\"embed\"]:focus > div": {
-		"display": "block",
+		"display": "none",
 		"position": "absolute",
-		"background-size": "contain",
 		"pointer-events": "none",
 		"width": "100%",
-		"height": "100%",
-		"animation": "spin 30s linear infinite",
+		"height": "100%"
+	},
+	"article[type=\"text\"]:hover > svg, article[type=\"embed\"]:hover > svg": {
+		"display": "block",
+		"opacity": "0.5"
+	},
+	"article[type=\"text\"]:focus > svg, article[type=\"embed\"]:focus > svg": {
+		"display": "block",
+		"opacity": "1",
+		"animation": "spin 30s linear infinite"
 	},
 	"@keyframes spin": {
 		"from": {

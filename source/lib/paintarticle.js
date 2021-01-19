@@ -302,9 +302,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
                     }
                 })()
             }},
-            {"div": {"style": {
-                "background-image": writeSVGbase64(art || ("article " + index)),
-            }}},
+            writeTitleSVG(art || ("article " + index))
             // and then a list of metasection or map areas that allow clicking a specific region of the geodesy
         ]
     }}
@@ -312,9 +310,9 @@ module.exports = function(params /* articleparams */, index, arrayref){
 }
 
 // first thing, 
-function writeSVGbase64(title){
-    return "url('data:image/svg+xml;base64," + Buffer.from(elementary({"svg": {
-            "xmlns":"http://www.w3.org/2000/svg",
+function writeTitleSVG(title){
+    return {"svg": {
+            // "xmlns":"http://www.w3.org/2000/svg",
             "width": "100",
             "height": "100",
             "viewbox": "0 0 100 100",
@@ -342,7 +340,7 @@ function writeSVGbase64(title){
                     }}
                 ]}
             ]
-        }})).toString('base64') + "')"
+        }}
 }
 
 function fillduplicate(string, len){

@@ -214,15 +214,29 @@ module.exports = function(params /* articleparams */, index, arrayref){
     // maybe easier to make a bbox that's a circle so its the same dimension whatever the rotation
     // pythagorous of top and left = radius... 
     console.log(cssvars)
-    let bboxtop = N(cssvars["--top"])
-        -   N(cssvars["--zoom"])
-        *   N(cssvars["--yunit"])
-        *  (N(cssvars["--ystep"]) + N(cssvars["--ycent"]))
+    // let bboxtop = N(cssvars["--top"])
+    //     -   N(cssvars["--zoom"])
+    //     *   N(cssvars["--yunit"])
+    //     *  (N(cssvars["--ystep"]) + N(cssvars["--ycent"]))
 
-    let bboxleft = N(cssvars["--left"])
-        - N(cssvars["--zoom"])
-        * N(cssvars["--xunit"])
-        * N(N(cssvars["--xstep"]) + N(cssvars["--xcent"]))
+    // let bboxleft = N(cssvars["--left"])
+    //     - N(cssvars["--zoom"])
+    //     * N(cssvars["--xunit"])
+    //     * N(N(cssvars["--xstep"]) + N(cssvars["--xcent"]))
+
+    let bboxtop = N(cssvars["--zoom"])
+        *  (
+            N(cssvars["--top"])
+            - N(cssvars["--yunit"])
+            * (N(cssvars["--ystep"]) + N(cssvars["--ycent"]))
+        )
+
+    let bboxleft = N(cssvars["--zoom"])
+        * (
+            N(cssvars["--left"])
+            - N(cssvars["--xunit"])
+            * (N(cssvars["--xstep"]) + N(cssvars["--xcent"]))
+        )
 
     console.log(bboxleft, bboxtop)
     // another way of sizing up the body instead of just doubling magnitude on either side of 0,

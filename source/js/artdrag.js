@@ -204,17 +204,17 @@ function reduceMagnitude({xmag, ymag}, article){
 	}
 
 	let props = getCSSVars(article)
-  	// let bboxtop = (props.top - (props.yunit * (props.ystep + props.ycent))) * props.zoom
-	// let bboxleft = (props.left + (props.xunit * (props.xstep + props.xcent))) * props.zoom
-  	let bboxtop = props.top
-        -   props.zoom
-        *   props.yunit
-        *   (props.ystep + props.ycent)
+  	let bboxtop = (props.top - (props.yunit * (props.ystep + props.ycent))) * props.zoom
+	let bboxleft = (props.left + (props.xunit * (props.xstep + props.xcent))) * props.zoom
+  	// let bboxtop = props.top
+    //     -   props.zoom
+    //     *   props.yunit
+    //     *   (props.ystep + props.ycent)
 
-    let bboxleft = props.left // shouldn't I multiply everything by zoom?
-        -   props.zoom
-        *   props.xunit
-        *   (props.xstep + props.xcent)
+    // let bboxleft = props.left // shouldn't I multiply everything by zoom?
+    //     -   props.zoom
+    //     *   props.xunit
+    //     *   (props.xstep + props.xcent)
 
     return {
     	xmag: Math.max(

@@ -57,7 +57,7 @@ module.exports = function(paramarray, options){
                     //     [ options.focus == "null"  ? "checked" : "" ]: ""
                     // }},
                     ...paramarray.map((param, index) => (
-                        {"label": [
+                        {"label": {"class":"layer", "childNodes": [
                             {"input": {
                                 "type":"radio",
                                 "name":"focus",
@@ -66,12 +66,29 @@ module.exports = function(paramarray, options){
                                 [ options.focus == index  ? "checked" : "" ]: "" 
                             }},
                             {"label": {
-                                "for": index, 
+                                "for": index,   
+                                "class": "title",
                                 "childNodes": [
                                     param.art || "article " + index
                                 ]
-                            }}
-                        ]}
+                            }},
+                            {"input": {
+                                "class": "mv",
+                                "type":"submit",
+                                "name": "cmd",
+                                "value": `▲-${index}`, // move up
+                                "formtarget": "_self", // override 'frame'
+                                "formaction": "form", // override 'paramarray'
+                            }},
+                            {"input": {
+                                "class": "mv",
+                                "type":"submit",
+                                "name": "cmd",
+                                "value": `▼-${index}`, // move down
+                                "formtarget": "_self", // override 'frame'
+                                "formaction": "form", // override 'paramarray'
+                            }},
+                        ]}}
                     ))
                 ]}
             ]},

@@ -44,9 +44,21 @@ module.exports = {
         "div[focused=\"false\"]": {
             "display": "none"
         },
+        "input.mv": {
+            "margin": "0",
+            "width": "20px"
+        },
         // hide paint/move buttons when in defocus mode
         "[focus=\"null\"] [value=\"paint\"], [focus=\"null\"] [value=\"move\"]": {
             "display": "none"
+        },
+        "label.layer:first-child > [value^=\"▲\"]": {
+            "opacity": "0.3",
+            "pointer-events": "none"
+        },
+        "label.layer:last-child > [value^=\"▼\"]": {
+            "opacity": "0.3",
+            "pointer-events": "none"
         },
 
         // hide the paint or move fieldset when its not needed
@@ -83,10 +95,6 @@ module.exports = {
 ,        "fieldset": {
             "margin-bottom":"10px",
 
-            "display":"flex",
-            "flex-direction":"column",
-            // "justify-content":"space-evenly",
-
             "font-family": "monospace",
             "font-size":   "large",
             "font-weight": "bold",
@@ -99,11 +107,18 @@ module.exports = {
         },
         "label, section":{
             "display":"flex",
+            "width": "212px",
             "justify-content":"space-between",
             "white-space":"nowrap",
             "align-items":"center",
             // "margin-bottom":"5px"
             "padding": "2px" // decided I prefered all around padding to 5px margin
+        },
+        "label.title": {
+            "display":"inline-block",
+            "overflow":"hidden",
+            "text-overflow": "ellipsis",
+            "white-space": "nowrap"
         },
         "label > *, section > *": {
             "margin": "2px 4px"

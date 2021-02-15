@@ -32,24 +32,53 @@ let choose = choices => choices[Math.floor(Math.random() * choices.length)]
 let defaultArticle = () => Object.assign({}, defaultParam, {motif: choose(motifs)})
 
 function modifyParamArray(paramarray, options){
-    switch(options.cmd){
-        case "clone":
-            // iterate from the end of the array, copying each element one index up until I hit the current focus, then copy that.
-            for(var i = paramarray.length; i > options.focus; i--){
-                paramarray[i] = paramarray[i - 1]
-            }
-            options.focus++
-        break
-        case "pop":
-            // iterate through array, starting from the focused element to the end (less 1, since we're always reading the +1nth element in the body of the loop)
-            for(var i = options.focus; i < (paramarray.length - 1); i++){
-                paramarray[i] = paramarray[i + 1]
-            }
-            paramarray.length-- // drop last element
-            options.focus > 0 && options.focus-- // decrement the focused element IF there is an element to drop down to
-        break
-        default:
-            console.log("noop")
+    // go through the paramarry , find which index has a cmd key,
+    // then read that cmd value (up or down)
+    // if the value of options.cmd ends in a number
+    let endsWithDigits = /(\w*)-(\d+)$/
+
+    if(endsWithDigits.test(options.cmd)){
+        // let [symbol, index] = options.cmd.match(endsWithDigits).slice(1,3)
+
+        let key = options.cmd
+        let hyphenpos = key.lastIndexOf('-')
+        let symbol = key.slice(0, hyphenpos)
+        let index = Number(key.slice(hyphenpos + 1))
+
+        console.error(options.cmd)
+        console.error(symbol, index)
+        // the index is which layer was clicked
+        // the symbol is whether to move that layer up or down
+        // in the case of 0, it can only be moved down (swap with one higher index)
+        // the last index can only be moved up (take last param, swap it with one lesser index)
+        let temp = paramarray[index]
+        if(symbol == "▲"){
+            console.error("Moving " + index + " UP ")
+            paramarray[index] = paramarray[index - 1]
+            paramarray[index - 1] = temp
+            options.focus = index - 1
+
+        }
+        if(symbol == "▼"){
+            console.error("Moving " + index + " DOWN ")
+            paramarray[index] = paramarray[index + 1]
+            paramarray[index + 1] = temp
+            options.focus = index + 1
+        }
+
+    } else if(options.cmd == "clone"){
+        // iterate from the end of the array, copying each element one index up until I hit the current focus, then copy that.
+        for(var i = paramarray.length; i > options.focus; i--){
+            paramarray[i] = paramarray[i - 1]
+        }
+        options.focus++
+    } else if(options.cmd == "pop"){
+        // iterate through array, starting from the focused element to the end (less 1, since we're always reading the +1nth element in the body of the loop)
+        for(var i = options.focus; i < (paramarray.length - 1); i++){
+            paramarray[i] = paramarray[i + 1]
+        }
+        paramarray.length-- // drop last element
+        options.focus > 0 && options.focus-- // decrement the focused element IF there is an element to drop down to 
     }
 
     // if last element was deleted, we'll get reset

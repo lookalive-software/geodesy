@@ -45,8 +45,6 @@ function modifyParamArray(paramarray, options){
         let symbol = key.slice(0, hyphenpos)
         let index = Number(key.slice(hyphenpos + 1))
 
-        console.error(options.cmd)
-        console.error(symbol, index)
         // the index is which layer was clicked
         // the symbol is whether to move that layer up or down
         // in the case of 0, it can only be moved down (swap with one higher index)

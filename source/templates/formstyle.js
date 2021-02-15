@@ -46,7 +46,7 @@ module.exports = {
         },
         "input.mv": {
             "margin": "0",
-            "width": "20px"
+            "width": "17px"
         },
         // hide paint/move buttons when in defocus mode
         "[focus=\"null\"] [value=\"paint\"], [focus=\"null\"] [value=\"move\"]": {
@@ -107,7 +107,7 @@ module.exports = {
         },
         "label, section":{
             "display":"flex",
-            "width": "212px",
+            "width": "200px",
             "justify-content":"space-between",
             "white-space":"nowrap",
             "align-items":"center",

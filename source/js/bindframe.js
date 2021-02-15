@@ -21,7 +21,10 @@ form.submit()
 
 
 function focusArticle(articleid /* numberish */){
-    location.hash = articleid // updates url
+    frame
+        .contentWindow
+        .location
+        .hash = articleid // updates url
     // if I have a link on the form to jump to the view, it needs to know the hash too.
     frame
         .contentDocument

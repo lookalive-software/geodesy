@@ -272,11 +272,12 @@ module.exports = function(params /* articleparams */, index, arrayref){
     return {"article": {
         "tabindex": "0",
         "type": type,
+        "id": index,
         "style": cssvars, // mostly vars 
         "childNodes": [ // section gets psuedo elements to place float shapes in the vicinity of flowed text inside section
             {"section": {
-                "title": art || ("article " + index), // TODO replace with params.title once it exists
                 "id": index,
+                "title": art || ("article " + index), // TODO replace with params.title once it exists
                 "style": {
                     /* overwrites the parents assignement to a mask to frame the content of section */
                     "--mask": "url('" + maskurl + "#section')"
@@ -342,7 +343,8 @@ function writeTitleSVG(title){
                         "stroke": "black",
                         "font-family": "monospace",
                         "font-size": "8px",
-                        "stroke-width": "0.3px"
+                        "font-weight": "600",
+                        "stroke-width": "0.2px"
                     }
                 }},
                 {"text": [

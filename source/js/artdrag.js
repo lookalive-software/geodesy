@@ -101,7 +101,7 @@ function createUpdate({clientX, clientY}){
 	var theLastX = clientX;
 	var theLastY = clientY;
 	// could also ask, indexOf
-	let focused = this.firstChild.id // this becomes global so that destroyUpdatePos knows who to scrollinto after recalculating...
+	let focused = this.id // this becomes global so that destroyUpdatePos knows who to scrollinto after recalculating...
 
   	// click focus on whatever radio button is up there... it won't reload the page, no problem if already selected
   	form.querySelector(`[type="radio"][name="focus"][id="${focused}"]`).click() // surely it will exist, right?

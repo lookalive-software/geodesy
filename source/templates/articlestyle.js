@@ -100,7 +100,8 @@ module.exports = { "style": {
 		"display": "block",
 		"opacity": "0.5"
 	},
-	"article[type=\"text\"]:focus > svg, article[type=\"embed\"]:focus > svg": {
+
+	"article[type=\"text\"]:target > svg, article[type=\"embed\"]:target > svg": {
 		"display": "block",
 		"opacity": "1",
 		"animation": "spin 30s linear infinite"

@@ -94,8 +94,14 @@ function modifyParamArray(paramarray, options){
     return paramarray
 }
 
-http.createServer((req, res) => {
+http.createServer(async (req, res) => {
     console.log(req.url)
+    let body = ""
+
+    req.on('data', packet => body += packet)
+    await new Promise(resolve => req.on('end', resolve))
+
+    console.log("QUERY IS ", body)
     
     let { 
         pathname,
@@ -111,7 +117,7 @@ http.createServer((req, res) => {
     let {
         paramarray,
         options
-    } = paramparse(query)
+    } = paramparse(body || query)
 
     // route is static | art | form | upload
     let route = pathname

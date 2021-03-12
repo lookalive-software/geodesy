@@ -2,6 +2,7 @@ module.exports = function(paramarray, options){
     console.log("FORM", {paramarray, options})
     return {"form": {
         "target": "frame",
+        "method": "post",
         "action": "/art/" + options.web, // current space name 
         "focus": options.focus, // 0 by default, may be null in 'defocus' mode !
         "mode": options.mode, // | paint | move -- this is a global setting that controls what click/drag tools are available in the iframe
@@ -113,6 +114,7 @@ module.exports = function(paramarray, options){
                         "value": "clone", // clone
                         "formtarget": "_self", // override 'frame'
                         "formaction": "#", // override 'paramarray'
+                        "formmethod": "post"
                     }},
                     {"input": {
                         "type":"submit",
@@ -120,6 +122,7 @@ module.exports = function(paramarray, options){
                         "value": "pop", // pop
                         "formtarget": "_self", // override 'frame'
                         "formaction": "#", // override 'paramarray'
+                        "formmethod": "post"
                     }}
                 ]}]},
                 // paint button
@@ -294,7 +297,9 @@ module.exports = function(paramarray, options){
                                 {"label": [
                                     "animate",
                                     {"input": {
-                                        "name": `pan-${n}`, "type": "checkbox", "value": "xy"
+                                            "name": `pan-${n}`,
+                                            "type": "checkbox",
+                                            [ param.pan ? "checked" : ""]: ""
                                     }}
                                 ]},
                                 {"label": [

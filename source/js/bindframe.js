@@ -1,3 +1,6 @@
+// all of the updating via css I only want to do without compatibility mode
+
+
 // this is only loaded on the /form/ route
 // the /art/ route is completely devoid of javascript
 // but, when editing the art, this does inject listeners into the iframe
@@ -93,6 +96,7 @@ document.querySelectorAll('input, select, textarea').forEach(input => {
     // so I recalcAll on mouseup, or when I interact with the form
     input.addEventListener('change', event => {
         console.log("CHANGE", event.target.name)
+
         if(/--((x|y)cent|(x|y)step)/.test(event.target.name)){
             recalcAll()
         }
@@ -100,6 +104,10 @@ document.querySelectorAll('input, select, textarea').forEach(input => {
     })
     // things that need to 
     input.addEventListener('input', event => {
+        // if compatibility mode..
+        console.log("OLD CHECKED", form.old.checked)
+
+
         let key = event.target.name
         // nope this doesn't let me catch my --zoomg, which doesn't have the param child #, it's global.
         // replace with regex...
@@ -112,6 +120,7 @@ document.querySelectorAll('input, select, textarea').forEach(input => {
         // check if event.target.name ends in a digit
         // then instead of writing to the body, write the style vars directly to iframe.contentDocument.children[index].style.setProperty(prefix, value)
         if(index && varname.indexOf('--') === 0){
+            if(form.old.checked){return submitDebounce(form)}
             //todo check if contentdocument is null
             // this first child needs to be updated to '
             frame
@@ -122,6 +131,7 @@ document.querySelectorAll('input, select, textarea').forEach(input => {
                 .setProperty(varname, event.target.value)
         } else switch(varname){
             case '--zoomg':
+               if(form.old.checked){return submitDebounce(form)}
                 console.log("ZOOMG")
                 // I don't like having to set the variable on the body
                 // an alternative would be to apply the variable to each individual article
@@ -132,6 +142,7 @@ document.querySelectorAll('input, select, textarea').forEach(input => {
                     .setProperty(varname, event.target.value)
             break
             case 'content': 
+                if(form.old.checked){return submitDebounce(form)}
                 try {
                     frame
                         .contentDocument
@@ -164,13 +175,18 @@ document.querySelectorAll('input, select, textarea').forEach(input => {
                 setTimeout(defocus.click()) // should submit the form // if the focus changes, click defocus?
             break
             default: 
-                clearInterval(lasttimeout) // cancel timeout that would have set class to active
-                // debounce
-                lasttimeout = setTimeout(()=>{
-                // basically this is submit the form in 100ms unless the form is submitted again, apply the same delay to that one.
-                    form.submit()
-                }, 100)
+                submitDebounce(form)
+                
                 console.log("submitting " + event.target.name)
         }
     })
 })
+
+function submitDebounce(form){
+    clearInterval(lasttimeout) // cancel timeout that would have set class to active
+    // debounce
+    lasttimeout = setTimeout(()=>{
+    // basically this is submit the form in 100ms unless the form is submitted again, apply the same delay to that one.
+        form.submit()
+    }, 100)
+}

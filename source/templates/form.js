@@ -2,6 +2,7 @@ module.exports = function(paramarray, options){
     console.log("FORM", {paramarray, options})
     return {"form": {
         "target": "frame",
+        [ options.old ? "old" : ""]: "",
         "method": "post",
         "action": "/art/" + options.web, // current space name 
         "focus": options.focus, // 0 by default, may be null in 'defocus' mode !
@@ -545,9 +546,20 @@ module.exports = function(paramarray, options){
                                     } // close switch statement
                                 })() // Immediately invoked
                             ]
-                        }}
+                        }},
+
                     ]}}
                 )),
+                {"fieldset": [
+                    {"label": [
+                        "compatibility mode",
+                        {"input": {
+                                "name": "old",
+                                "type": "checkbox",
+                                [ options.old ? "checked" : ""]: ""
+                        }}
+                    ]},
+                ]}
             ]}
         ]
     }}

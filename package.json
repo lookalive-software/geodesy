@@ -1,6 +1,6 @@
 {
   "name": "@lookalive/geodesy",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Geometric Divisions of Space for Composing Visuaully Memorable Data Collections",
   "main": "source/server.js",
   "directories": {

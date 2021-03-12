@@ -43,6 +43,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
         ywindow, 
         linejoin, // bevel | miter | round
         motif,
+        pan, // whether to animate, flipped 'pan true' attribute 
         shells,
         type, // embed | text | net
         ratio,
@@ -271,6 +272,7 @@ module.exports = function(params /* articleparams */, index, arrayref){
 
     return {"article": {
         "tabindex": "0",
+        "pan": Boolean(pan),
         "type": type,
         "id": index,
         "style": cssvars, // mostly vars 

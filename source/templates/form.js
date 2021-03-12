@@ -15,12 +15,17 @@ module.exports = function(paramarray, options){
                 "name":"mode", "type":"hidden", "value": options.mode // paint | move
             }},
             {"menu": [
+                // a global button could be: get link | download (jpeg|mp4)
+                // a default title might be the current date, which updates itself over time and ensures multiple versions are kept
+                // so files can naturally be rolled back merely by name -- could compress really well if need be -- largely identical files.
                 {"fieldset": [
                     {"input": {
                         "type": "text",
                         "placeholder": "web address",
                         "name": "web",
-                        "value": options.web
+                        // I also have to build the form based off a GET, 
+                        // so I guess a route /$/
+                        "value": options.web || (new Date().toLocaleDateString())
                         // if this is empty string, no worries just use root, you can store one URL at "",
                         // if you want to make a new one 
                         // storing the URL at this address maybe gives me space to sync up 
@@ -36,6 +41,13 @@ module.exports = function(paramarray, options){
                         "name":`--zoomg`,
                         "value": options["--zoomg"]
                     }}]},
+                    {"input": {
+                        "type":"submit",
+                        "name":"update",
+                        "value": "update",
+                        "formtarget": "_self",
+                        "formaction":"#"
+                    }}, // noscript fallback to manually submit the form
                 ]},
                 {"input": {
                     "type":"submit",
@@ -43,7 +55,7 @@ module.exports = function(paramarray, options){
                     "name": "defocus", // gets submitted ?defocus=focus
                     "value": "focus",
                     "formtarget": "_self", // override 'frame'
-                    "formaction": "form", // override 'paramarray'
+                    "formaction": "#", // override 'paramarray'
                 }},
                 // focus fieldset
                 // focus=focus will get overwritten with focus=2 or whatever
@@ -78,7 +90,7 @@ module.exports = function(paramarray, options){
                                 "name": "cmd",
                                 "value": `▲-${index}`, // move up
                                 "formtarget": "_self", // override 'frame'
-                                "formaction": "form", // override 'paramarray'
+                                "formaction": "#", // override 'paramarray'
                             }},
                             {"input": {
                                 "class": "mv",
@@ -86,7 +98,7 @@ module.exports = function(paramarray, options){
                                 "name": "cmd",
                                 "value": `▼-${index}`, // move down
                                 "formtarget": "_self", // override 'frame'
-                                "formaction": "form", // override 'paramarray'
+                                "formaction": "#", // override 'paramarray'
                             }},
                         ]}}
                     ))
@@ -94,21 +106,20 @@ module.exports = function(paramarray, options){
             ]},
             // one 'focus' button
             {"menu": [
-                {"noscript": [{"input": {"type":"submit", "value": "update"}}]}, // noscript fallback to manually submit the form
                 {"fieldset": [{"div":[
                     {"input": {
                         "type":"submit",
                         "name": "cmd",
                         "value": "clone", // clone
                         "formtarget": "_self", // override 'frame'
-                        "formaction": "form", // override 'paramarray'
+                        "formaction": "#", // override 'paramarray'
                     }},
                     {"input": {
                         "type":"submit",
                         "name": "cmd",
                         "value": "pop", // pop
                         "formtarget": "_self", // override 'frame'
-                        "formaction": "form", // override 'paramarray'
+                        "formaction": "#", // override 'paramarray'
                     }}
                 ]}]},
                 // paint button
@@ -117,7 +128,7 @@ module.exports = function(paramarray, options){
                     "name": "mode",
                     "value": "paint",
                     "formtarget": "_self", // override 'frame'
-                    "formaction": "form", // override 'paramarray'
+                    "formaction": "#", // override 'paramarray'
                 }},
                 // move button
                 {"input": {
@@ -125,7 +136,7 @@ module.exports = function(paramarray, options){
                     "name": "mode",
                     "value": "move",
                     "formtarget": "_self", // override 'frame'
-                    "formaction": "form", // override 'paramarray'
+                    "formaction": "#", // override 'paramarray'
                 }},
                 // paint fieldsets
                 ...paramarray.map((param, n) => (
@@ -281,6 +292,12 @@ module.exports = function(paramarray, options){
                                     }}
                                 ]},
                                 {"label": [
+                                    "animate",
+                                    {"input": {
+                                        "name": `pan-${n}`, "type": "checkbox", "value": "xy"
+                                    }}
+                                ]},
+                                {"label": [
                                     "spin", 
                                     {"input":{
                                         "name":`--spin-${n}`,"type":"range","min":"0","max": "360","step":"15","value": param["--spin"]
@@ -304,7 +321,7 @@ module.exports = function(paramarray, options){
                                     "value": "text",
                                     "type":"submit",
                                     "formtarget": "_self", // override 'frame'
-                                    "formaction": "form", // override 'paramarray'
+                                    "formaction": "#", // override 'paramarray'
                                     // "childNodes": ["text"]
                                 }},
                                 {"input": {
@@ -312,7 +329,7 @@ module.exports = function(paramarray, options){
                                     "value": "embed",
                                     "type":"submit",
                                     "formtarget": "_self", // override 'frame'
-                                    "formaction": "form", // override 'paramarray'
+                                    "formaction": "#", // override 'paramarray'
                                     // "childNodes": ["embed"]
                                 }},
                                 {"input": {
@@ -320,7 +337,7 @@ module.exports = function(paramarray, options){
                                     "value": "net",
                                     "type":"submit",
                                     "formtarget": "_self", // override 'frame'
-                                    "formaction": "form", // override 'paramarray'
+                                    "formaction": "#", // override 'paramarray'
                                     // "childNodes": ["jali"]
                                 }},
                             // ]

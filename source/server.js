@@ -25,6 +25,8 @@ const defaultParam = require('../types/defaultParam')
 const defaultOption = require('../types/defaultOption')
 const mimetypes = require('../types/mimetypes')
 
+const paramcache = {}
+
 const motifs = ["square", "cairo", "honeycomb", "pyritohedron", "doublesquares", "snubsquare", "2to1brick", "alternatetriangles", "root13star", "goldenstars2"]
 let choose = choices => choices[Math.floor(Math.random() * choices.length)]
 
@@ -94,24 +96,44 @@ function modifyParamArray(paramarray, options){
 
 http.createServer((req, res) => {
     console.log(req.url)
-    let { pathname, query, hash } = url.parse(req.url)
-    let { name, ext } = path.parse(pathname)
+    
+    let { 
+        pathname,
+        query,
+        hash
+    } = url.parse(req.url)
+
+    let {
+        name,
+        ext
+    } = path.parse(pathname)
+
+    let {
+        paramarray,
+        options
+    } = paramparse(query)
+
     // route is static | art | form | upload
-    let route = pathname.split('/').slice(1,2).pop()
+    let route = pathname
+                .split('/')
+                .slice(1,2)
+                .pop()
     // resource is the path of a file, either upload or static or the name of the 'space' being requested
-    let resource = pathname.split('/').slice(2).join('/')
-    let { paramarray, options } = paramparse(query)
+    let resource = pathname
+                    .split('/')
+                    .slice(2)
+                    .join('/')
 
     // if !options.web, options.web = resource
-    console.log({route, resource, name, ext, hash})
-
-
+    // console.log({route, resource, name, ext, hash})
 
     // it would be really great to have typed options that coerce stuff for me
     // modifyParamArray pulls defaultParams
     // but I should make sure options is filled out with defaults and overwrite
     // overwrite focus, mode, web -- global opts
-    options = Object.assign({}, defaultOption, options)
+    // use the resource URL as the web in options UNLESS a new web is supplied in the options object
+    // options are just params without a number at the end, number indicates index in list
+    options = Object.assign({}, defaultOption, {web: resource}, options)
     options.focus = Number(options.focus)
 
     switch(route){
@@ -121,7 +143,40 @@ http.createServer((req, res) => {
         break
         // in art | form, use the pathname to look up an object, querybody.link 
         case 'form':
+            // if options was included in the request, then I can check the incoming 'url' against my current url...
+            if(options.web != resource){
+                // maybe, before redirecting to the name without the query,
+                // you can go ahead and store the param object at the paramcache on the new name
+                paramcache[options.web] = [paramarray, options]
+                res.writeHead(301, {"Location": '/form/' + options.web })
+                res.end()
+                break;
+            }
+            // anytime I post the form, 
+            // take the rest of the url parts, append them with '/' to be a single string key
+            // IF THERE IS a parameter object included, then we're being overwritten
+            // but if paramarray.length = 0, lookup from paramcache 
+            // if there is paramarray, store the new result at the address indicated by resource
+            console.error("PARAM ARRAY LENGTH", paramarray.length)
+            console.error("RESOURCE LOOKS LIKE", paramcache[resource])
+            if( !paramarray.length && paramcache[resource] ){
+                console.error("LOOKING UP", resource);
+                [paramarray,options] = paramcache[resource]
+            } else {
+                // write the current resource path to the paramacache using latest params
+                console.error("STORING AT", resource)
+                paramcache[resource] = [paramarray, options]
+            }
             paramarray = modifyParamArray(paramarray, options)
+
+            // if options.web is different than resource, redirect to options.web as the new url... I only want to see the result of the form
+            //
+
+
+            // else continue with default options and default article
+            // then I can use the URLs as a list of pages to 'burn' to the git archive
+            // to easily push 
+
             res.end(elementary([
                 {"head": [
                     {"title":["Geodesy"]}, // could be paramarray[options['focus']]['title'] // need to update it in bindframe.js on defocus
@@ -145,9 +200,19 @@ http.createServer((req, res) => {
                 ]}
             ]))
         break
+        case '$':
         case 'art': 
+            console.error("PARAM ARRAY LENGTH", paramarray.length)
+            if( !paramarray.length && paramcache[resource] ){
+                console.error("LOOKING UP", resource)
+                ;[paramarray,options] = paramcache[resource]
+            } else {
+                // write the current resource path to the paramacache using latest params
+                console.error("STORING AT", resource)
+                paramcache[resource] = [paramarray, options]
+            }
             paramarray = modifyParamArray(paramarray, options)
-            // get painted array while adding bbox to paramarray
+        // get painted array while adding bbox to paramarray
             let paintedarray = paramarray.map(paintarticle)
 
             // take xmag and ymag, addjust them by adding 

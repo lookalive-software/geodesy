@@ -67,7 +67,7 @@ module.exports = {
         },
         // update is wrapped ein noscript
         // defocus is the top button of the focus fieldset
-        "menu > [name=\"defocus\"], menu > [value=\"update\"]": {
+        "menu > [name=\"defocus\"], menu [value=\"update\"]": {
             "width": "100%"
         },
         "menu > [name=\"defocus\"]": {

@@ -164,6 +164,41 @@ module.exports = { "style": {
 	  	  * 1px
   		)`,
 	},
+	// pan may exist pan=x, pan=y, pan=xy, so match whether attribute contains x and y
+	"[type=\"net\"][pan=\"true\"] section, [type=\"net\"][pan=\"true\"]:after":{
+		"animation": "calc((1 - var(--xcent)) * 10s) panx linear infinite, calc((1 - var(--ycent)) * 10s) pany linear infinite"
+	},
+	// "[type=\"net\"][pan=\"true\"] section, [type=\"net\"][pan=\"true\"]:after":{
+	// 	"animation": "calc((1 - var(--ycent)) * 10s) pany linear infinite"
+	// },
+	// only use this animation when checkbox ...
+	// use xcent and ycent as speeds for different animations
+	"@keyframes panx": {
+		"from": {
+			"-webkit-mask-position-x": "0px"
+		},
+		"to": {
+			"-webkit-mask-position-x": `calc(
+				var(--width)
+			  * var(--zoom)
+			  * var(--zoomg)
+			  * 1px
+			  )`,
+		}
+	},
+	"@keyframes pany": {
+		"from": {
+			"-webkit-mask-position-y": "0px"
+		},
+		"to": {
+			"-webkit-mask-position-y": `calc(
+				var(--height)
+			  * var(--zoom)
+			  * var(--zoomg)
+			  * 1px
+			  )`,
+		}
+	},
 	// for TEXT articles
 	"article[type=\"text\"] section": {
 		"text-align":"var(--align)", // left | center | right | justify

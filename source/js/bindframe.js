@@ -19,8 +19,8 @@ let hiddenfocus = document.querySelector('input[type="hidden"][name="focus"]')
 
 form.submit()
 
-
 function focusArticle(articleid /* numberish */){
+    console.log("FOCUS", articleid)
     frame
         .contentWindow
         .location
@@ -37,7 +37,7 @@ function focusArticle(articleid /* numberish */){
 // first thing
 // extra settimeout because load fires when subreources are loaded, but I'm not convinced it waits til first paint
 frame.addEventListener('load', () => {
-    focusArticle(hiddenfocus.value) // grab the focus that was rendered into the form markup    
+    setTimeout(() => focusArticle(hiddenfocus.value), 100) // grab the focus that was rendered into the form markup    
 })
 
 // the buffer sits underneath the frame
